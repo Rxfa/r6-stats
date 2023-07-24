@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import time
 from dataclasses import asdict
 from pprint import pprint
 from player import Player
@@ -11,6 +12,7 @@ from round import Round
 
 def main():
     """Main function"""
+    t = time.process_time()
     parser = argparse.ArgumentParser(
         prog="R6 Stats",
         description="R6 Stats",
@@ -26,6 +28,8 @@ def main():
     with open(filename, encoding="utf-8") as f:
         data = json.load(f)
         stats(data)
+        elapsed = time.process_time() - t
+        print(f"Time of execution - {elapsed}s")
 
 
 def stats(data):
@@ -103,13 +107,14 @@ def match_feedback(events, players):
     DEATH_ID = 1
     DEFUSER_PLANT_START_ID = 2
     DEFUSER_PLANTED_ID = 3
+    DEFUSER_DISABLED_ID = -1 #TODO: Find out the ID
     LOCATE_OBJECTIVE_ID = 6
     OPERATOR_SWAP_ID = 7
     OTHER_ID = 10
     entry_kill = True
     entry_death = True
     time = -1
-    for event in events:
+    for idx, event in enumerate(events):
         if event["type"]["id"] == KILL_ID:
             
             if event["username"] in players:
@@ -127,6 +132,14 @@ def match_feedback(events, players):
                     entry_death = False
                 #to calculate trades and refrags
                 #time = event["timeInSeconds"]
+                
+        if event["type"]["id"] == DEFUSER_PLANTED_ID and event["username"] in players:
+            player = players[event["username"]]
+            player.plants += 1
+            
+        if event["type"]["id"] == DEFUSER_DISABLED_ID and event["username"] in players:
+            player = players[event["username"]]
+            player.disables += 1
     return None
 
 def calculate_KOST():
@@ -135,20 +148,18 @@ def calculate_KOST():
     #TODO
     return None
 
-def calculate_clutches():
+def calculate_clutches(round, players):
     """Calculates the number of rounds in which the player won after being left in a 1vX situation"""
-    #TODO
-    return None
-
-def calculate_entry_engagements():
-    """Calculates Entry Kills and Entry Deaths"""
-    #TODO
-    return None
     
-def calculate_defuser_interactions():
-    """Calculates the number of times the player planted and disabled the defuser"""
-    #TODO
-    return None
+    """WARNING:Should only be called if team of the recording player wins the round"""
+    players_alive = list(filter(survived, round["stats"]))
+    if len(players_alive) == 1:
+        player = players[players_alive[0]["username"]]
+        player.clutches += 1
+
+def survived(player):
+    """Returns True if the player survived the whole round"""
+    return False if player["died"] else True
 
 if __name__ == "__main__":
     main()
