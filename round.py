@@ -5,8 +5,8 @@ class Round:
     """
     Round information
     """
-    map: str
     number: int
+    map: str
     site: str
     side: str
     won: bool

@@ -15,7 +15,7 @@ class Player:
     refrags: int = 0
     trades: int = 0
     clutches: int = 0
-    multikill: int = 0
+    multikills: int = 0
     plants: int = 0
     disables: int = 0
     kost: float = 0
