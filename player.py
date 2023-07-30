@@ -18,4 +18,4 @@ class Player:
     multikills: int = 0
     plants: int = 0
     disables: int = 0
-    kost: float = 0
+    kost: str = "0"
