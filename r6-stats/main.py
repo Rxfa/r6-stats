@@ -62,8 +62,8 @@ def get_team_stats(data):
     rounds = dict()
     players = {x: Player(name=x, rounds=len(data["rounds"])) for x in team_players}
     get_kd(data["stats"], players)
-    round_history = loop_round_by_round(data["rounds"], rounds, players)
-    print(round_history)
+    loop_round_by_round(data["rounds"], rounds, players)
+    print(rounds)
     for i in players.values():
         pprint(i)
 
@@ -112,7 +112,6 @@ def loop_round_by_round(src, rounds, players):
         )
         get_match_feedback(round, players)
     get_KOST(src, players)
-    return rounds
 
 
 def get_win_condition(rnd):
