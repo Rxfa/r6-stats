@@ -16,12 +16,12 @@ class Matchclass:
         )
         self.own_bans = None #   Not possible to get as of august 18th 2023
         self.op_bans = None #   Not possible to get as of august 18th 2023
-        self.rounds = []
+        self.rounds = {}
         self.starting_side = get_side(src)     
         self.players = {x: Player(name=x, rounds=len(src["rounds"])) for x in self.get_team_players(src)}
         
         self.do_kd(src)
-        self.do_KOST(src)
+        self.do_KOST(src["rounds"])
         self.do_round_history(src)
         
     def get_team_players(self, src):
@@ -39,7 +39,7 @@ class Matchclass:
                 player.headshots = i["headshots"]
                 
     def do_round_history(self, src):
-        for count, rnd in enumerate(src):
+        for count, rnd in enumerate(src["rounds"]):
             self.rounds[count] = Round(
                 number=rnd["roundNumber"],
                 map=rnd["map"]["name"],

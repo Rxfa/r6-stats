@@ -6,8 +6,6 @@ import sys
 from game import Matchclass
 from utils import timer
 
-class Side(enum)
-
 @timer
 def main(filename):
     with open(filename, encoding="utf-8") as f:
