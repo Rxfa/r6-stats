@@ -11,4 +11,3 @@ class Round:
     side: str
     won: bool
     win_condition: str
-    
