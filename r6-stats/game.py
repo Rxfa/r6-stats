@@ -23,6 +23,7 @@ class Matchclass:
         self.do_kd(src)
         self.do_KOST(src["rounds"])
         self.do_round_history(src)
+        self.calculate_individual_stats()
         
     def get_team_players(self, src):
         if self.starting_side == "Attack":
@@ -49,6 +50,10 @@ class Matchclass:
                 win_condition=self.determine_win_condition(rnd),
             )
             self.do_individual_stats(rnd)
+            
+    def calculate_individual_stats(self):
+        for player in self.players.values():
+            player.calculate()
         
     def team_won(self, rnd):
         if rnd["teams"][0]["name"] == "YOUR TEAM":

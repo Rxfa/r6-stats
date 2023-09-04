@@ -1,4 +1,4 @@
-from .models import *
+from .models import Game, Round, Player
 from django.contrib.auth.models import User
 from rest_framework import serializers
 
