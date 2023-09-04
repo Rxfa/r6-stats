@@ -26,6 +26,13 @@ class Player:
         self.do_entries()
         self.do_srv()
         self.do_rating()
+        self.format()
+      
+    def format(self):
+        self.rating = "{:.2f}".format(self.rating)
+        self.kd = "{:.2f}".format(self.kd)
+        self.kost = "{:.2f}".format(self.kost)
+        self.srv = "{:.2f}".format(self.srv)
         
     def do_rating(self):
         self.rating = (

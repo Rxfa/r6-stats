@@ -80,7 +80,7 @@ class Match:
                 Round(
                 number=rnd["roundNumber"],
                 map=rnd["map"]["name"],
-                site="0", #site=round["site"]
+                site=rnd["site"],
                 side=get_side(src, rnd["roundNumber"]),
                 won=self._team_won(rnd),
                 win_condition=self._determine_win_condition(rnd),
@@ -105,7 +105,7 @@ class Match:
                 if self._kost(rnd, player):
                     kost += 1
             kost /= len(rnds)
-            self.players[player].kost = format(kost, '.2f')
+            self.players[player].kost = kost
     
     def _kost(self, rnd, player):
         return (
