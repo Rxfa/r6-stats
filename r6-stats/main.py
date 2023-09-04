@@ -3,14 +3,16 @@ import argparse
 import json
 import os
 import sys
-from game import Matchclass
+from game import Match
 from utils import timer
 
 @timer
 def main(filename):
     with open(filename, encoding="utf-8") as f:
         data = json.load(f)
-        game = Matchclass(data)
+        game = Match(data)
+    
+    print(game)
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(prog="R6 Stats", description="R6 Stats")
