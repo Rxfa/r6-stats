@@ -13,8 +13,21 @@ class Game(models.Model):
     map=models.CharField(max_length=20)
     own_score=models.IntegerField()
     opp_score=models.IntegerField()
-    own_ban=models.CharField(max_length=20, blank=True)
-    opp_ban=models.CharField(max_length=20, blank=True)
+    own_atk_ban=models.CharField(max_length=20, blank=True)
+    own_def_ban=models.CharField(max_length=20, blank=True)
+    opp_atk_ban=models.CharField(max_length=20, blank=True)
+    opp_def_ban=models.CharField(max_length=20, blank=True)
+    
+    def __str__(self):
+        return f"#{self.id} - {self.user.username} - {self.map}"
+    
+    @property
+    def score(self):
+        return f"{self.own_score}-{self.opp_score}"
+    
+    @property
+    def bans(self):
+        return f"{self.own_atk_ban}/{self.own_def_ban} & {self.opp_atk_ban}/{self.opp_def_ban}"
     
 class Round(models.Model):
     game=models.ForeignKey(Game, on_delete=models.CASCADE, related_name="rounds")
@@ -23,6 +36,9 @@ class Round(models.Model):
     side=models.CharField(max_length=20)
     won=models.BooleanField()
     win_condition=models.CharField(max_length=20)
+    
+    def __str__(self):
+        return f"#{self.number} [{'WIN' if self.won else 'LOSS'}] {self.side} {self.site}"
     
 class Player(models.Model): 
     game=models.ForeignKey(Game, on_delete=models.CASCADE, related_name="stats")
@@ -39,3 +55,27 @@ class Player(models.Model):
     disables=models.IntegerField()
     kost=models.FloatField()
     rating=models.FloatField()
+    
+    @property
+    def entry_diff(self):
+        return self.entry_kills - self.entry_deaths
+    
+    @property
+    def kpr(self):
+        return self.kills / self.rounds
+    
+    @property
+    def kd_ratio(self):
+        return self.kills / self.deaths
+    
+    @property
+    def srv(self):
+        return (self.rounds - self.deaths) / self.rounds
+    
+    @property
+    def kd_diff(self):
+        return self.kills - self.deaths
+    
+    @property
+    def hs_percentage(self):
+        return f"{(self.headshots / self.rounds) * 100}%"
