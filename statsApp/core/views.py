@@ -1,12 +1,13 @@
 import json
+from django_filters.rest_framework import DjangoFilterBackend
 from django.contrib.auth.models import User
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, filters
 from rest_framework.response import Response
 from urllib.parse import urlparse
 import statsScript.main as statsScript
 from .serializers import UserSerializer, GameSerializer, UploadSerializer, RoundSerializer
 from .models import Game, JSONUpload, Round, Player
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
@@ -22,6 +23,10 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Game.objects.prefetch_related("rounds", "stats")
     serializer_class = GameSerializer
     permissions_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+    filterset_fields = ["date", "id", "map", "own_score", "opp_score", "own_ban", "opp_ban"]
+    ordering_fields = ["date", "id", "map"]
+    ordering = "date"
 
 class UploadViewSet(viewsets.ModelViewSet):
     queryset = JSONUpload.objects.all().order_by("-upload_date")
@@ -30,7 +35,6 @@ class UploadViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save()
-        print("This the data\n\n\n")
         file_path = f".{urlparse(serializer.data['file']).path}"
         json_obj = json.loads(statsScript.main(file_path))
         self.create_game(json_obj)
@@ -42,15 +46,15 @@ class UploadViewSet(viewsets.ModelViewSet):
             map=obj["map"],
             own_score=obj["score"][0],
             opp_score=obj["score"][1],
-            own_ban="",
-            opp_ban=""
+            own_ban="", #TODO: Change when it becomes possible to know the bans
+            opp_ban="" #TODO: Change when it becomes possible to know the bans
         )
         game.save()
-        self.create_rounds(obj["rounds"], game)
-        self.create_stats(obj["players"], game)
+        self.create_rounds(obj, game)
+        self.create_stats(obj, game)
     
-    def create_rounds(self, rounds, game):
-        for i in rounds:
+    def create_rounds(self, obj, game):
+        for i in obj["rounds"]:
             round = Round(
                 game=game,
                 number=i["number"],
@@ -61,8 +65,8 @@ class UploadViewSet(viewsets.ModelViewSet):
             )
             round.save()
             
-    def create_stats(self, players, game):
-        for i in players.values():
+    def create_stats(self, obj, game):
+        for i in obj["players"].values():
             player = Player(
                 game=game,
                 name=i["name"],

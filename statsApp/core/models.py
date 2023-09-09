@@ -7,6 +7,8 @@ class JSONUpload(models.Model):
     upload_date = models.DateTimeField(auto_now_add=True)
 
 class Game(models.Model):
+    date=models.DateField(auto_now_add=True)
+    file=models.ForeignKey(JSONUpload, on_delete=models.SET_NULL, null=True, blank=True)
     user=models.ForeignKey(User, on_delete=models.CASCADE, related_name="games")
     map=models.CharField(max_length=20)
     own_score=models.IntegerField()
