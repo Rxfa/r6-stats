@@ -1,22 +1,7 @@
-from .models import Game, Round, Player
 from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import Game, Round, Player, JSONUpload
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ['url', 'username', 'email']
-
-class GameSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Game
-        fields = ["map", "own_score", "opp_score", "own_ban", "opp_ban"]
-    
-class RoundSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Round
-        fields = ["number", "site", "side", "won", "win_condition"]
-    
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player
@@ -33,8 +18,27 @@ class PlayerSerializer(serializers.ModelSerializer):
             "plants",
             "disables",
             "kost"
-            ]
+        ]
+    
+class RoundSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Round
+        fields = ["number", "site", "side", "won", "win_condition"]
+        
+class GameSerializer(serializers.ModelSerializer):
+    rounds = RoundSerializer(many=True)
+    stats = PlayerSerializer(many=True)
+    class Meta:
+        model = Game
+        fields = "__all__"
 
-class StatsSerializer(serializers.ModelSerializer):
-    model = Stats
-    fields = ["players"]
+class UploadSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = JSONUpload
+        fields = ["url", "file"]
+        
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    games = GameSerializer(many=True)
+    class Meta:
+        model = User
+        fields = ["url", "username", "email", "games"]
