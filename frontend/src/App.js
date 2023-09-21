@@ -1,25 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
+import { ChakraProvider } from '@chakra-ui/react'
+import Table from './components/table';
+import { useState, useEffect } from 'react';
+import axios from "axios";
 
-function App() {
+const App = () =>{
+  const [games, setGames] = useState([]);
+
+  useEffect(() => {
+    axios.get("http://localhost:8000/games").then(res => {
+      setGames(res.data.results);
+      console.log(res.data.results);
+    }).catch(error => {
+      console.error(error);
+    });
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ChakraProvider>
+      <Table data={games} />
+    </ChakraProvider>
   );
-}
+};
 
 export default App;
