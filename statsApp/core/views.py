@@ -24,7 +24,7 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = GameSerializer
     permissions_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
-    filterset_fields = ["date", "id", "map", "own_score", "opp_score", "own_ban", "opp_ban"]
+    filterset_fields = ["date", "id", "map", "own_score", "opp_score", "own_atk_ban", "own_def_ban", "opp_atk_ban", "opp_def_ban"]
     ordering_fields = ["date", "id", "map"]
     ordering = "date"
 
@@ -46,8 +46,11 @@ class UploadViewSet(viewsets.ModelViewSet):
             map=obj["map"],
             own_score=obj["score"][0],
             opp_score=obj["score"][1],
-            own_ban="", #TODO: Change when it becomes possible to know the bans
-            opp_ban="" #TODO: Change when it becomes possible to know the bans
+            #TODO: Change when it becomes possible to know the bans
+            own_atk_ban="",
+            own_def_ban="",
+            opp_atk_ban="",
+            opp_def_ban="",
         )
         game.save()
         self.create_rounds(obj, game)

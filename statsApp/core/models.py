@@ -3,10 +3,19 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 class JSONUpload(models.Model):
-    file = models.FileField(upload_to="JSON_upload/%Y/%m/%d")
+    file = models.FileField(upload_to="media/JSON_upload/%Y/%m/%d")
     upload_date = models.DateTimeField(auto_now_add=True)
 
-class Game(models.Model):
+class Operator(models.Model):
+    SIDES = [
+        ("ATK", "Attack"),
+        ("DEF", "Defense")
+    ]
+    name = models.CharField(max_length=50)
+    icon = models.ImageField(upload_to="media/operators")
+    side = models.CharField(max_length=3, choices=SIDES, default="ATK")
+
+class Game(models.Model):    
     date=models.DateField(auto_now_add=True)
     file=models.ForeignKey(JSONUpload, on_delete=models.SET_NULL, null=True, blank=True)
     user=models.ForeignKey(User, on_delete=models.CASCADE, related_name="games")
