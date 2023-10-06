@@ -5,8 +5,8 @@ from rest_framework import viewsets, permissions, filters
 from rest_framework.response import Response
 from urllib.parse import urlparse
 import statsScript.main as statsScript
-from .serializers import UserSerializer, GameSerializer, UploadSerializer, RoundSerializer
-from .models import Game, JSONUpload, Round, Player
+from .serializers import UserSerializer, GameSerializer, UploadSerializer, RoundSerializer, OperatorSerializer, MapSerializer
+from .models import Game, JSONUpload, Round, Player, Map, Operator
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
@@ -87,3 +87,13 @@ class UploadViewSet(viewsets.ModelViewSet):
                 rating=i["rating"],
             )
             player.save()
+            
+class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Operator.objects.all()
+    serializer_class = OperatorSerializer
+    permissions_classes = [permissions.IsAuthenticated]
+
+class MappoolViewSet(viewsets.ModelViewSet):
+    queryset = Map.objects.all().order_by("-name")
+    serializer_class =  MapSerializer
+    permissions_classes = [permissions.IsAuthenticated]

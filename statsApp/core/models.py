@@ -1,19 +1,26 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
 
 # Create your models here.
 class JSONUpload(models.Model):
     file = models.FileField(upload_to="media/JSON_upload/%Y/%m/%d")
     upload_date = models.DateTimeField(auto_now_add=True)
+    
+class Map(models.Model):
+    class MapRotation(models.TextChoices):
+        pass
+    name = models.CharField(max_length=50)
+    type = None
 
 class Operator(models.Model):
-    SIDES = [
-        ("ATK", "Attack"),
-        ("DEF", "Defense")
-    ]
+    class OperatorSide(models.TextChoices):
+        ATK = "ATK"
+        DEF = "DEF"
+
     name = models.CharField(max_length=50)
-    icon = models.ImageField(upload_to="media/operators")
-    side = models.CharField(max_length=3, choices=SIDES, default="ATK")
+    icon = models.ImageField(upload_to="media/operators", validators=[FileExtensionValidator(["png", "jpg"])])
+    side = models.CharField(max_length=3, choices=OperatorSide.choices, default=OperatorSide.ATK)
 
 class Game(models.Model):    
     date=models.DateField(auto_now_add=True)
@@ -26,7 +33,10 @@ class Game(models.Model):
     own_def_ban=models.CharField(max_length=20, blank=True)
     opp_atk_ban=models.CharField(max_length=20, blank=True)
     opp_def_ban=models.CharField(max_length=20, blank=True)
-    
+    """
+    Bans are not FK because as of Oct 5 2023, 
+    it's not possible to know the operator bans from the game replay file.
+    """
     def __str__(self):
         return f"#{self.id} - {self.user.username} - {self.map}"
     

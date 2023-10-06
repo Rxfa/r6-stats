@@ -1,6 +1,16 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Game, Round, Player, JSONUpload
+from .models import Game, Round, Player, JSONUpload, Operator, Map
+
+class MapSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Map
+        fields = ["name"]
+
+class OperatorSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Operator
+        fields = ["icon", "name", "side"]
 
 class PlayerSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,7 +20,7 @@ class PlayerSerializer(serializers.ModelSerializer):
             "headshots", "hs_percentage","entry_kills", "entry_deaths", "entry_diff", "clutches",
             "multikills", "plants", "disables", "kost", "srv"
             ]
-    
+
 class RoundSerializer(serializers.ModelSerializer):
     class Meta:
         model = Round

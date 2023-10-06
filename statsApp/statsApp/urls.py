@@ -24,6 +24,9 @@ router.register(r'users', views.UserViewSet)
 router.register(r'games', views.GameViewSet)
 router.register(r'upload', views.UploadViewSet)
 
+router.register(r"mappool", views.MappoolViewSet)
+router.register(r"operators", views.OperatorViewSet)
+
 urlpatterns = [
     path('', include(router.urls)),
     path("api-auth", include("rest_framework.urls", namespace="rest_framework")),
