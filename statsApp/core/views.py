@@ -93,7 +93,7 @@ class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OperatorSerializer
     permissions_classes = [permissions.IsAuthenticated]
 
-class MappoolViewSet(viewsets.ModelViewSet):
+class MappoolViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Map.objects.all().order_by("-name")
     serializer_class =  MapSerializer
     permissions_classes = [permissions.IsAuthenticated]
