@@ -89,9 +89,11 @@ class UploadViewSet(viewsets.ModelViewSet):
             player.save()
             
 class OperatorViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Operator.objects.all()
+    queryset = Operator.objects.all().order_by("-name")
     serializer_class = OperatorSerializer
     permissions_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["side"]
 
 class MappoolViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Map.objects.all().order_by("-name")

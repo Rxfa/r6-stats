@@ -6,7 +6,7 @@ A brief description of what this project does and who it's for
 
 ## Authors
 
-- [@octokatherine](https://www.github.com/octokatherine)
+- [@Rxfa](https://www.github.com/Rxfa)
 
 
 ## Features
@@ -21,7 +21,7 @@ A brief description of what this project does and who it's for
 
 **Client:** React, Redux, TailwindCSS
 
-**Server:** Node, Express
+**Server:** Django, Django Rest Framework
 
 
 ## Documentation
@@ -54,7 +54,7 @@ Answer 2
 
 ## Feedback
 
-If you have any feedback, please reach out to us at fake@fake.com
+If you have any feedback, please reach out to us at ...
 
 
 ## License

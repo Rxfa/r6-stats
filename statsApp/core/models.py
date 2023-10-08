@@ -8,10 +8,7 @@ class JSONUpload(models.Model):
     upload_date = models.DateTimeField(auto_now_add=True)
     
 class Map(models.Model):
-    class MapRotation(models.TextChoices):
-        pass
     name = models.CharField(max_length=50)
-    type = None
 
 class Operator(models.Model):
     class OperatorSide(models.TextChoices):
