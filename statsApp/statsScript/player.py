@@ -37,14 +37,14 @@ class Player:
 
     def _do_rating(self):
         self.rating = (
-            0.031 * self.entry_kills -
-            0.042 * self.entry_deaths +
-            0.666 * self.kpr +
-            0.261 * self.srv +
-            0.225 * float(self.kost) +
-            0.066 * self.clutches +
-            0.076 * self.plants +
-            0.033 * self.disables
+            0.031 * self.entry_kills
+            - 0.042 * self.entry_deaths
+            + 0.666 * self.kpr
+            + 0.261 * self.srv
+            + 0.225 * float(self.kost)
+            + 0.066 * self.clutches
+            + 0.076 * self.plants
+            + 0.033 * self.disables
         )
 
     def _do_kd(self):

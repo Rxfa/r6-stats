@@ -4,24 +4,38 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0011_remove_game_opp_ban_remove_game_own_ban_and_more'),
+        ("core", "0011_remove_game_opp_ban_remove_game_own_ban_and_more"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Operator',
+            name="Operator",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
-                ('icon', models.ImageField(upload_to='media/operators')),
-                ('side', models.CharField(choices=[('ATK', 'Attack'), ('DEF', 'Defense')], default='ATK', max_length=3)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
+                ("icon", models.ImageField(upload_to="media/operators")),
+                (
+                    "side",
+                    models.CharField(
+                        choices=[("ATK", "Attack"), ("DEF", "Defense")],
+                        default="ATK",
+                        max_length=3,
+                    ),
+                ),
             ],
         ),
         migrations.AlterField(
-            model_name='jsonupload',
-            name='file',
-            field=models.FileField(upload_to='media/JSON_upload/%Y/%m/%d'),
+            model_name="jsonupload",
+            name="file",
+            field=models.FileField(upload_to="media/JSON_upload/%Y/%m/%d"),
         ),
     ]

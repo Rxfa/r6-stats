@@ -4,22 +4,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0012_operator_alter_jsonupload_file'),
+        ("core", "0012_operator_alter_jsonupload_file"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Map',
+            name="Map",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=50)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
             ],
         ),
         migrations.AlterField(
-            model_name='operator',
-            name='side',
-            field=models.CharField(choices=[('ATK', 'Atk'), ('DEF', 'Def')], default='ATK', max_length=3),
+            model_name="operator",
+            name="side",
+            field=models.CharField(
+                choices=[("ATK", "Atk"), ("DEF", "Def")], default="ATK", max_length=3
+            ),
         ),
     ]

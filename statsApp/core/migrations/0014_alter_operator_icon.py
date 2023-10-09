@@ -5,15 +5,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0013_map_alter_operator_side'),
+        ("core", "0013_map_alter_operator_side"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='operator',
-            name='icon',
-            field=models.ImageField(upload_to='media/operators', validators=[django.core.validators.FileExtensionValidator(['svg'])]),
+            model_name="operator",
+            name="icon",
+            field=models.ImageField(
+                upload_to="media/operators",
+                validators=[
+                    django.core.validators.FileExtensionValidator(["svg"])],
+            ),
         ),
     ]
