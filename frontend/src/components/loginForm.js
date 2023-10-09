@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { withRouter } from "../utils/utils";
+import { emailIsValid, withRouter } from "../utils/utils";
 import axios from "axios";
 import { connect } from "react-redux";
 import {
@@ -17,42 +17,74 @@ import {
     Link as ChakraLink, 
     HStack,
     InputGroup,
-    InputRightElement
+    InputRightElement,
+    useToast,
+    useBoolean
   } from '@chakra-ui/react';
   import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-  import { signupNewUser } from "./signup/signupActions";
+  import { signupNewUser } from "./login/signupActions";
   import { login } from "./login/loginActions";
 
 axios.defaults.baseURL = 'http://localhost:8000';
 
+const defaultTime = 8000;
 
 function SignUp(props){
+
+    const toast = useToast()
+
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
+    const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
-    const [showPassword, setShowPassword] = useState(false)
+    const [showPassword, setShowPassword] = useBoolean(false)
 
-    const handleFirstNameChange = (e) => setFirstName(e.target.value)
-    const handleLastNameChange = (e) => setLastName(e.target.value)
-    const handleUsernameChange = (e) => setUsername(e.target.value)
-    const handlePasswordChange = (e) => setPassword(e.target.value)
-
-    const handleEmailError = (e) => {
-        e.preventDefault();
-        if(!(/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(e.target.value))){
-            alert("Email is invalid")
-        }
-
-    }
-
+    const handleFirstNameChange = e => setFirstName(e.target.value)
+    const handleLastNameChange = e => setLastName(e.target.value)
+    const handleUsernameChange = e => setUsername(e.target.value)
+    const handlePasswordChange = e => setPassword(e.target.value)
+    const handleEmailChange = e => setEmail(e.target.value)
+    
     const handleSignUp = () => {
-        const userData = {
-            username: username,
-            password: password
-        };
-        signupNewUser(userData);
+        if(email && username && password){
+            if(emailIsValid(email)){
+                const userData = {
+                    firstname: firstName,
+                    lastname: lastName,
+                    email: email,
+                    username: username,
+                    password: password
+                };
+                return [
+                    toast({
+                        title: "Account created",
+                        description: "We've created your account for you.",
+                        status: 'success',
+                        duration: defaultTime,
+                        isClosable: true
+                    }),
+                    signupNewUser(userData)
+                ];
+            } else {
+                return toast({
+                    title: 'Invalid email',
+                    description: 'Please enter a valid email address',
+                    status: 'error',
+                    duration: defaultTime,
+                    isClosable: true
+                })
+            }
+        } else {
+            return toast({
+                title: 'Error',
+                description: 'Please fill all the required fields valid information',
+                status: 'error',
+                duration: defaultTime,
+                isClosable: true
+            })    
+        }
     }
 
     return (
@@ -87,6 +119,10 @@ function SignUp(props){
                         </FormControl>
                         </Box>
                     </HStack>
+                    <FormControl id="" isRequired>
+                        <FormLabel>Email</FormLabel>
+                        <Input type="email" onChange={handleEmailChange}></Input>
+                    </FormControl>
                     <FormControl id="username" isRequired>
                         <FormLabel>Username</FormLabel>
                         <Input type="text" onChange={handleUsernameChange}/>
@@ -98,7 +134,7 @@ function SignUp(props){
                         <InputRightElement h={'full'}>
                             <Button
                             variant={'ghost'}
-                            onClick={() => setShowPassword((showPassword) => !showPassword)}>
+                            onClick={() => setShowPassword.toggle()}>
                             {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                             </Button>
                         </InputRightElement>
@@ -140,6 +176,7 @@ function SignUp(props){
 function SignIn(props) {
     const [user, setUser] = useState('')
     const [password, setPassword] = useState('')
+    const [rememberMe, setRememberMe] = useBoolean(false)
 
     const handleUsernameChange = (e) => setUser(e.target.value)
     const handlePasswordChange = (e) => setPassword(e.target.value)
@@ -180,7 +217,7 @@ function SignIn(props) {
                     direction={{ base: 'column', sm: 'row' }}
                     align={'start'}
                     justify={'space-between'}>
-                    <Checkbox>Remember me</Checkbox>
+                    <Checkbox onChange={() => setRememberMe.toggle()}>Remember me</Checkbox>
                     </Stack>
                     <Stack>
                         <Text align={'center'}>
@@ -222,6 +259,8 @@ connect(mapStateToProps, {
 
 function ForgotPassword(props){
 
+    const toast = useToast()
+
     const [email, setEmail] = useState("")
 
     const handleEmailChange = (e) => setEmail(e.target.value)
@@ -259,7 +298,26 @@ function ForgotPassword(props){
             </FormControl>
             <Stack spacing={6}>
                 <Button
-                onClick={() => props.handleClick("ResetPassword")}
+                onClick={() => {
+                    if(emailIsValid(email)){
+                        toast({
+                            title: 'Reset link sent',
+                            description: `A reset link was sent to ${email}.`,
+                            status: 'success',
+                            duration: defaultTime,
+                            isClosable: true
+                        })
+                        props.handleClick("ResetPassword")
+                    } else {
+                        toast({
+                            title: 'Reset link not sent',
+                            description: 'The email you entered is invalid',
+                            status: 'error',
+                            duration: defaultTime,
+                            isClosable: true
+                        })
+                    }
+                }}
                 bg={'blue.400'}
                 color={'white'}
                 _hover={{
