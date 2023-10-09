@@ -1,23 +1,95 @@
 import { ThemeProvider } from "@emotion/react";
+import { MoonIcon, SunIcon } from '@chakra-ui/icons'
+import {
+    Box,
+    Flex,
+    Avatar,
+    Text,
+    Button,
+    Menu,
+    MenuButton,
+    MenuList,
+    MenuItem,
+    MenuDivider,
+    useDisclosure,
+    useColorModeValue,
+    Stack,
+    useColorMode,
+    Center,
+  } from '@chakra-ui/react'
 
-import theme from "../themes/theme";
-import {Box, Button, Typography, IconButton, AppBar, Toolbar, Icon} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 
-const Header = () => (
-    <ThemeProvider theme={theme}>
-        <Box sx={{ }}>
-            <AppBar>
-                <Toolbar>
-                    <IconButton size="large" edge="start" aria-label="menu" sx={{mr: 2 }}>
-                        <MenuIcon />
-                    </IconButton>
-                    <Typography variant="h5" component="div" sx={{flexGrow: 1 }}>Home</Typography>
-                    <Button color="inherit">Logout</Button>
-                </Toolbar>
-            </AppBar>
-        </Box>
-    </ThemeProvider>
-);
+const NavLink = (props) => {
+  const { children } = props
+
+  return (
+    <Box
+      as="a"
+      px={2}
+      py={1}
+      rounded={'md'}
+      _hover={{
+        textDecoration: 'none',
+        bg: useColorModeValue('gray.200', 'gray.700'),
+      }}
+      href={'#'}>
+      {children}
+    </Box>
+  )
+}
+
+function Header(){
+    const { colorMode, toggleColorMode } = useColorMode()
+    const { isOpen, onOpen, onClose } = useDisclosure()
+   
+    return (
+          <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+            <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+              <Box>Logo</Box>
+    
+              <Flex alignItems={'center'}>
+                <Stack direction={'row'} spacing={7}>
+                  <Button onClick={toggleColorMode}>
+                    {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+                  </Button>
+    
+                  <Menu>
+                    <MenuButton
+                      as={Button}
+                      rounded={'full'}
+                      variant={'link'}
+                      cursor={'pointer'}
+                      minW={0}>
+                      <Avatar
+                        size={'sm'}
+                        src={'https://avatars.dicebear.com/api/male/username.svg'}
+                      />
+                    </MenuButton>
+                    <MenuList alignItems={'center'}>
+                      <br />
+                      <Center>
+                        <Avatar
+                          size={'2xl'}
+                          src={'https://avatars.dicebear.com/api/male/username.svg'}
+                        />
+                      </Center>
+                      <br />
+                      <Center>
+                        <p>Username</p>
+                      </Center>
+                      <br />
+                      <MenuDivider />
+                      <MenuItem>Your Servers</MenuItem>
+                      <MenuItem>Account Settings</MenuItem>
+                      <MenuItem>Logout</MenuItem>
+                    </MenuList>
+                  </Menu>
+                </Stack>
+              </Flex>
+            </Flex>
+          </Box>
+      )
+
+}
 
 export default Header;

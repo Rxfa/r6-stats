@@ -65,6 +65,8 @@ import {
   ViewIcon
 } from '@chakra-ui/icons';
 
+axios.defaults.baseURL = 'http://localhost:8000';
+
 function AddModalComponent(){
   const { isOpen, onOpen, onClose } = useDisclosure()
   return(
@@ -254,7 +256,7 @@ function FilterBox(...params){
   const [defOps, setDefOps] = useState([]);
 
   useEffect(() => {
-    axios.get("http://localhost:8000/operators?side=ATK").then(res => {
+    axios.get("operators?side=ATK").then(res => {
       const operators = res.data.map(item => item.name);
       setAtkOps(operators);
     }).catch(error => {
@@ -263,7 +265,7 @@ function FilterBox(...params){
   }, [])
 
   useEffect(() => {
-    axios.get("http://localhost:8000/operators?side=DEF").then(res => {
+    axios.get("operators?side=DEF").then(res => {
       const operators = res.data.map(item => item.name);
       setDefOps(operators);
     }).catch(error => {
@@ -272,7 +274,7 @@ function FilterBox(...params){
   }, [])
 
   useEffect(() => {
-    axios.get("http://localhost:8000/mappool").then(res => {
+    axios.get("mappool").then(res => {
       const maps = res.data.map(item => item.name);
       setMapPool(maps);
     }).catch(error => {
@@ -347,7 +349,7 @@ function TableComponent() {
   const [oppDEFBan, setOppDEFBan] = useState("");
 
   useEffect(() => {
-    axios.get("http://localhost:8000/games").then(res => {
+    axios.get("games").then(res => {
       setGames(res.data.results);
       console.log(res.data.results);
     }).catch(error => {
@@ -357,7 +359,7 @@ function TableComponent() {
 
   useEffect(() => {
     axios.get(
-      `http://localhost:8000/games/?date=${date}&id=${checkedGamesIds}&map=${playedMap}&own_score=${ownScore}&opp_score=${oppScore}&own_atk_ban=${ownATKBan}&own_def_ban=${ownDEFBan}&opp_atk_ban=${oppATKBan}&opp_def_ban=${oppDEFBan}`
+      `games/?date=${date}&id=${checkedGamesIds}&map=${playedMap}&own_score=${ownScore}&opp_score=${oppScore}&own_atk_ban=${ownATKBan}&own_def_ban=${ownDEFBan}&opp_atk_ban=${oppATKBan}&opp_def_ban=${oppDEFBan}`
       ).then(res => {
         setGames(res.data.results);
       setCheckedGames(res.data.results);
