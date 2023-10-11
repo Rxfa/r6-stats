@@ -9,6 +9,10 @@ export const resetPassword = (userData) => {
         .catch(err => console.log(err))
 }
 
+export const resetPasswordConfirm = (userData) => {
+    
+}
+
 export const resetUsername = (userData) => {
     axios
         .post("api/users/reset_username")

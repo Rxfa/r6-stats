@@ -1,5 +1,6 @@
-import { useNavigate } from 'react-router';
 import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from 'react-router';
 
 export const setAxiosAuthToken = token => {
   if (typeof token !== "undefined" && token) {
@@ -8,6 +9,18 @@ export const setAxiosAuthToken = token => {
   } else {
     // Delete auth header
     delete axios.defaults.headers.common["Authorization"];
+  }
+};
+
+export const toastOnError = error => {
+  console.log("error")
+  if (error.response) {
+    // known error
+    toast.error(JSON.stringify(error.response.data));
+  } else if (error.message) {
+    toast.error(JSON.stringify(error.message));
+  } else {
+    toast.error(JSON.stringify(error));
   }
 };
 

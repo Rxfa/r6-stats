@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { emailIsValid, withRouter } from "../utils/utils";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { connect } from "react-redux";
 import {
     Flex,
@@ -22,8 +23,10 @@ import {
     useBoolean
   } from '@chakra-ui/react';
   import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
-  import { signupNewUser } from "./login/signupActions";
-  import { login } from "./login/loginActions";
+  import { SignupNewUser } from "./login/signupActions";
+  import { setAxiosAuthToken } from "../utils/utils";
+import { setPassword } from "./login/setActions";
+import { useNavigate } from "react-router";
 
 axios.defaults.baseURL = 'http://localhost:8000';
 
@@ -56,34 +59,50 @@ function SignUp(props){
                     email: email,
                     username: username,
                     password: password
-                };
-                return [
-                    toast({
-                        title: "Account created",
-                        description: "We've created your account for you.",
-                        status: 'success',
-                        duration: defaultTime,
-                        isClosable: true
-                    }),
-                    signupNewUser(userData)
-                ];
+                }; 
+                axios
+                    .post("/api/users/", userData)
+                    .then(res => {
+                        toast({
+                            title: "Account created successfully",
+                            description: "We've created your account for you",
+                            status: "success",
+                            duration: defaultTime,
+                            isClosable: true
+                        })
+                    })
+                    .catch(error => {
+                        if(error.response.data){
+                            for(const [_, value] of Object.entries(error.response.data)){
+                                value.map(item => 
+                                    toast({
+                                        title: "Error",
+                                        description: item,
+                                        status: "error",
+                                        duration: defaultTime,
+                                        isClosable: true
+                                    })
+                                )
+                            }
+                        }
+                    })
             } else {
-                return toast({
-                    title: 'Invalid email',
-                    description: 'Please enter a valid email address',
-                    status: 'error',
+                toast({
+                    title:"Error",
+                    description: "Please enter a valid email address",
+                    status: "error",
                     duration: defaultTime,
                     isClosable: true
                 })
             }
         } else {
-            return toast({
-                title: 'Error',
-                description: 'Please fill all the required fields valid information',
-                status: 'error',
+            toast({
+                title:"Error",
+                description: "Please fill all the required fields",
+                status: "error",
                 duration: defaultTime,
                 isClosable: true
-            })    
+            })   
         }
     }
 
@@ -174,19 +193,94 @@ function SignUp(props){
 }
 
 function SignIn(props) {
-    const [user, setUser] = useState('')
+    const toast = useToast()
+    const navigate = useNavigate()
+
+    const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [showPassword, setShowPassword] = useBoolean(false)
     const [rememberMe, setRememberMe] = useBoolean(false)
 
-    const handleUsernameChange = (e) => setUser(e.target.value)
-    const handlePasswordChange = (e) => setPassword(e.target.value)
+    const handleUsernameChange = e => setUsername(e.target.value)
+    const handlePasswordChange = e => setPassword(e.target.value)
 
     const handleSignIn = () => {
-        const userData = new FormData()
-        userData.append('username', user)
-        userData.append('password', password)
-        login(userData, '/dashboard');
+        if(username && password){
+            const userData = new FormData()
+            userData.append('username', username)
+            userData.append('password', password)
+            axios
+                .post("api/token/login/", userData)
+                .then(response => {
+                    const { auth_token } = response.data;
+                    setAxiosAuthToken(auth_token);
+                    setToken(auth_token);
+                    getCurrentUser("dashboard");
+                })
+                .catch(error => {
+                    unsetCurrentUser();
+                    if(error.response.data){
+                        for(const [_, value] of Object.entries(error.response.data)){
+                            value.map(item => 
+                                toast({
+                                    title: "Error",
+                                    description: item,
+                                    status: "error",
+                                    duration: defaultTime,
+                                    isClosable: true
+                                })
+                            )
+                        }
+                    }
+                });     
+        } else{
+            toast({
+                title: 'Error',
+                description: 'Please fill enter a username and a password',
+                status: 'error',
+                duration: defaultTime,
+                isClosable: true
+            })
+        }
     }
+
+    const getCurrentUser = redirectTo => {
+        axios
+          .get("/api/users/me/")
+          .then(response => {
+            const user = {
+              username: response.data.username,
+              email: response.data.email
+            };
+            setCurrentUser(user, redirectTo);
+          })
+          .catch(error => {
+            unsetCurrentUser();
+          });
+      };
+
+    const setCurrentUser = (user, redirectTo) => {
+        localStorage.setItem("user", JSON.stringify(user));
+        toast({
+            title:"Logged in!",
+            description: `Welcome ${user.username}!`,
+            status: "success",
+            duration: defaultTime,
+            isClosable: true
+        })
+        setTimeout(() => navigate(redirectTo), 3000);
+    };
+
+    const setToken = token => {
+        setAxiosAuthToken(token);
+        localStorage.setItem("token", token);
+    };
+
+    const unsetCurrentUser = () => {
+        setAxiosAuthToken("");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+    };
 
     return (
         <Flex
@@ -210,7 +304,16 @@ function SignIn(props) {
                 </FormControl>
                 <FormControl id="password">
                     <FormLabel>Password</FormLabel>
-                    <Input type="password" onChange={handlePasswordChange} />
+                    <InputGroup>
+                        <Input type={showPassword ? 'text' : 'password'} onChange={handlePasswordChange} />
+                        <InputRightElement h={'full'}>
+                                <Button
+                                variant={'ghost'}
+                                onClick={() => setShowPassword.toggle()}>
+                                {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                                </Button>
+                        </InputRightElement>
+                    </InputGroup>
                 </FormControl>
                 <Stack spacing={10}>
                     <Stack
@@ -248,15 +351,6 @@ function SignIn(props) {
     )
 }
 
-const mapStateToProps = state => ({
-    auth: state.auth
-});
-
-connect(mapStateToProps, {
-    login
-  })(withRouter(SignIn));
-
-
 function ForgotPassword(props){
 
     const toast = useToast()
@@ -264,6 +358,31 @@ function ForgotPassword(props){
     const [email, setEmail] = useState("")
 
     const handleEmailChange = (e) => setEmail(e.target.value)
+
+    const handleForgotPassword = () => {
+        if(emailIsValid(email)){
+            const userData = new FormData()
+            userData.append('email', email)
+            props.handleClick("ResetPassword")
+            return [
+                toast({
+                    title: 'Reset link sent',
+                    description: `A reset link was sent to ${email}.`,
+                    status: 'success',
+                    duration: defaultTime,
+                    isClosable: true
+                }),
+                setPassword(userData)
+            ];
+        }
+        return toast({
+            title: 'Error',
+            description: 'Please enter a valid email address',
+            status: 'error',
+            duration: defaultTime,
+            isClosable: true
+        })
+    }
 
     return(
         <Flex
@@ -298,26 +417,7 @@ function ForgotPassword(props){
             </FormControl>
             <Stack spacing={6}>
                 <Button
-                onClick={() => {
-                    if(emailIsValid(email)){
-                        toast({
-                            title: 'Reset link sent',
-                            description: `A reset link was sent to ${email}.`,
-                            status: 'success',
-                            duration: defaultTime,
-                            isClosable: true
-                        })
-                        props.handleClick("ResetPassword")
-                    } else {
-                        toast({
-                            title: 'Reset link not sent',
-                            description: 'The email you entered is invalid',
-                            status: 'error',
-                            duration: defaultTime,
-                            isClosable: true
-                        })
-                    }
-                }}
+                onClick={handleForgotPassword}
                 bg={'blue.400'}
                 color={'white'}
                 _hover={{
@@ -338,6 +438,8 @@ function ResetPassword(props){
 
     const handlePasswordChange = (e) => setPassword(e.target.value);
     const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
+
+    const handleResetPassword = () => {}
 
     return (
         <Flex
