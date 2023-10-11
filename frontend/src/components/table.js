@@ -16,11 +16,13 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogCloseButton,
+  Box,
   Checkbox,
   IconButton,
   Flex,
   FormControl,
   FormLabel,
+  HStack,
   FormErrorMessage,
   FormHelperText,
   Input,
@@ -52,10 +54,15 @@ import {
   Td,
   TableCaption,
   TableContainer,
+  RadioGroup,
+  Radio,
   Stack,
   useDisclosure,
+  useColorModeValue,
   Button,
   Select,
+  Divider,
+  Heading,
 } from '@chakra-ui/react';
 
 import {
@@ -254,6 +261,7 @@ function FilterBox(...params){
   const [mappool, setMapPool] = useState([]);
   const [atkOps, setAtkOps] = useState([]);
   const [defOps, setDefOps] = useState([]);
+  const [radio, setRadio] = useState("");
 
   useEffect(() => {
     axios.get("operators?side=ATK").then(res => {
@@ -283,54 +291,90 @@ function FilterBox(...params){
    }, []);
    
   return(
-    <form>
-      <FormControl>
-        {
-          // Do date
-        }
-        <FormLabel>Map</FormLabel>
-        <Select placeholder="Select map">
+    <Flex 
+     justify={"center"}
+     align={"center"}
+    >
+      <Stack 
+       rounded={"xl"}
+       spacing={4}
+       p={4}
+       boxShadow={"2xl"}
+      >
+        <Heading textAlign={"center"}>Filters</Heading>
+        <Divider direction={"horizontal"} />
+        <FormControl id="result">
+          <FormLabel textAlign={"center"}>Result</FormLabel>
+          <Select placeholder="Select">
+                <option value={"Win"}>Win</option>
+                <option value={"Draw"}>Draw</option>
+                <option value={"Loss"}>Loss</option>
+          </Select>
+        </FormControl>
+        <FormControl id="map">
           {
-            mappool.map((val, idx) => {
-              console.log(`[mappool] - ${mappool}`)
-              return <option value={`${val}${idx}`}>{val}</option>
-          })
+            // Do date
           }
-        </Select>
-        <FormLabel>Own ATK ban</FormLabel> 
-        <Select placeholder="Select ATK ban">
-          {
-            atkOps.map((val, idx) => 
-              <option value={`${val}${idx}`}>{val}</option>
-            )
-          }  
-        </Select>  
-        <FormLabel>Opp ATK ban</FormLabel> 
-        <Select placeholder="Select ATK ban">
-          {
-            atkOps.map((val, idx) => 
-              <option value={`${val}${idx}`}>{val}</option>
-            )
-          }  
-        </Select>      
-        <FormLabel>Own DEF ban</FormLabel>
-        <Select placeholder="Select DEF ban">
-          {
-            defOps.map((val, idx) => 
-              <option value={`${val}${idx}`}>{val}</option>
-            )
-          } 
-        </Select>  
-        <FormLabel>Opp DEF ban</FormLabel>
-        <Select placeholder="Select DEF ban">
-          {
-            defOps.map((val, idx) => 
-              <option value={`${val}${idx}`}>{val}</option>
-            )
-          } 
-        </Select>     
-      </FormControl>
-    </form>
+          <FormLabel textAlign={"center"}>Map</FormLabel>
+          <Select placeholder="Select">
+            {
+              mappool.map((val, idx) => {
+                console.log(`[mappool] - ${mappool}`)
+                return <option value={`${val}${idx}`}>{val}</option>
+              })
+            }
+          </Select>
+        </FormControl>
+        <HStack spacing={4}>
+          <Box>
+            <FormControl id="ownATKBan">
+              <FormLabel textAlign={"center"}>Own ATK ban</FormLabel> 
+              <Select placeholder="Select">
+                {
+                  atkOps.map((val, idx) => <option value={`${val}${idx}`}>{val}</option>)
+                }  
+              </Select> 
+            </FormControl>
+          </Box>
+          <Box>
+            <FormControl id="ownDEFBan">
+              <FormLabel textAlign={"center"}>Own DEF ban</FormLabel>
+              <Select placeholder="Select">
+                {
+                  defOps.map((val, idx) => 
+                    <option value={`${val}${idx}`}>{val}</option>
+                  )
+                } 
+              </Select> 
+            </FormControl>
+          </Box>
+        </HStack>
+        <HStack>
+        <Box>
+            <FormControl id="oppATKBan"> 
+              <FormLabel textAlign={"center"}>Opp ATK ban</FormLabel> 
+              <Select placeholder="Select">
+                {
+                  atkOps.map((val, idx) => <option value={`${val}${idx}`}>{val}</option>)
+                }  
+              </Select>      
+            </FormControl>
+          </Box>
+          <Box>
+            <FormControl id="oppDEFBan"> 
+              <FormLabel textAlign={"center"}>Opp DEF ban</FormLabel>
+              <Select placeholder="Select">
+                {
+                  defOps.map((val, idx) => 
+                    <option value={`${val}${idx}`}>{val}</option>
+                  )
+                } 
+              </Select>
+            </FormControl>
+          </Box>
+        </HStack>
+      </Stack>
+    </Flex>
   )
 }
 
@@ -375,82 +419,97 @@ function TableComponent() {
    * ???Make it a function called on click???
    */
   return(
-    <Flex direction={"column"}>
-      <Stack direction={"row-reverse"} spacing={"auto"} mx={"6"}>
-        {
-          checkedGamesIds.length >= 1 ? (
-            <>
-              <DeleteAlertComponent />
-              <ViewModalComponent />
-            </>
-          ) : checkedGamesIds.length === 0 ? (
-            <AddModalComponent />
-          ) : null
-        }
-      </Stack>
-      <TableContainer>
-        <Table size="lg" variant="striped" colorScheme="messenger">
-          <TableCaption>Games</TableCaption>
-          <Thead>
-            <Th>
-              <Checkbox
-              isChecked={checkedGamesIds.length === games.map(row => row.id).length}
-              onChange={() => {
-                const gameIds = games.map(row => row.id)
-                if (checkedGamesIds.length === gameIds.length){
-                  setCheckedGamesIds([])
-                } else {
-                  setCheckedGamesIds(gameIds)
-                }
-              }}
-              >
-                ID
-              </Checkbox>
-            </Th>
-            <Th>Date</Th>
-            <Th>Map</Th>
-            <Th>Score</Th>
-            <Th>Own - ATK ban</Th>
-            <Th>Own - DEF ban</Th>
-            <Th>Opp - ATK ban</Th>
-            <Th>Opp - DEF ban</Th>
-          </Thead>
-          <Tbody>
+    <Flex 
+      direction={"column"}
+      minH={'100vh'}
+      align={'center'}
+      justify={'center'}
+      bg={useColorModeValue('gray.50', 'gray.800')}
+    >
+      <Stack direction={"row"} spacing={"auto"}>
+        <Stack 
+          direction={"column"} 
+          spacing={"auto"} 
+          rounded={"2xl"}
+          boxShadow={"2xl"}
+        >
+          <Stack direction={"row-reverse"} spacing={"auto"} py={"4"} mx={"6"}>
             {
-              games.map(row => (
-                <Tr>
-                  <Td>
-                    <Checkbox
-                    isChecked={
-                      checkedGamesIds.includes(row.id)
-                    }
-                    onChange={() => {
-                      console.log(checkedGamesIds)
-                      const idx = checkedGamesIds.indexOf(row.id)
-                      if(idx !== -1){
-                        setCheckedGamesIds([...checkedGamesIds.slice(0, idx), ...checkedGamesIds.slice(idx+1)])
-                      } else {
-                        setCheckedGamesIds([...checkedGamesIds, row.id])
-                      }
-                    }}
-                    >
-                      {row.id}
-                    </Checkbox>
-                  </Td>
-                  <Td>{row.date}</Td>
-                  <Td>{row.map}</Td>
-                  <Td>{row.score}</Td>
-                  <Td>{row.own_atk_ban}</Td>
-                  <Td>{row.own_def_ban}</Td>
-                  <Td>{row.opp_atk_ban}</Td>
-                  <Td>{row.opp_def_ban}</Td>
-                </Tr>
-              ))
+              checkedGamesIds.length >= 1 ? (
+                <>
+                  <DeleteAlertComponent />
+                  <ViewModalComponent />
+                </>
+              ) : checkedGamesIds.length === 0 ? (
+                <AddModalComponent />
+              ) : null
             }
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <FilterBox />
+          </Stack>
+          <TableContainer>
+            <Table size="lg">
+              <Thead>
+                <Th>
+                  <Checkbox
+                  isChecked={checkedGamesIds.length === games.map(row => row.id).length}
+                  onChange={() => {
+                    const gameIds = games.map(row => row.id)
+                    if (checkedGamesIds.length === gameIds.length){
+                      setCheckedGamesIds([])
+                    } else {
+                      setCheckedGamesIds(gameIds)
+                    }
+                  }}
+                  >
+                    ID
+                  </Checkbox>
+                </Th>
+                <Th>Date</Th>
+                <Th>Map</Th>
+                <Th>Score</Th>
+                <Th>Own - ATK ban</Th>
+                <Th>Own - DEF ban</Th>
+                <Th>Opp - ATK ban</Th>
+                <Th>Opp - DEF ban</Th>
+              </Thead>
+              <Tbody>
+                {
+                  games.map(row => (
+                    <Tr>
+                      <Td>
+                        <Checkbox
+                        isChecked={
+                          checkedGamesIds.includes(row.id)
+                        }
+                        onChange={() => {
+                          console.log(checkedGamesIds)
+                          const idx = checkedGamesIds.indexOf(row.id)
+                          if(idx !== -1){
+                            setCheckedGamesIds([...checkedGamesIds.slice(0, idx), ...checkedGamesIds.slice(idx+1)])
+                          } else {
+                            setCheckedGamesIds([...checkedGamesIds, row.id])
+                          }
+                        }}
+                        >
+                          {row.id}
+                        </Checkbox>
+                      </Td>
+                      <Td>{row.date}</Td>
+                      <Td>{row.map}</Td>
+                      <Td>{row.score}</Td>
+                      <Td>{row.own_atk_ban}</Td>
+                      <Td>{row.own_def_ban}</Td>
+                      <Td>{row.opp_atk_ban}</Td>
+                      <Td>{row.opp_def_ban}</Td>
+                    </Tr>
+                  ))
+                }
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </Stack>
+        <Divider orientation="vertical" mx={4} variant="solid" colorScheme="twitter"/>
+        <FilterBox />
+      </Stack>
     </Flex>
   );
 }
