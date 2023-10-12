@@ -1,37 +1,66 @@
-import ThemeProvider from '@mui/material/styles/ThemeProvider';
+import {
+  Box,
+  chakra,
+  Container,
+  Spacer,
+  Stack,
+  Text,
+  useColorModeValue,
+  VisuallyHidden,
+} from '@chakra-ui/react'
 
-import theme from '../themes/theme';
-import {Box, Typography, IconButton} from '@mui/material';
+import { FaDiscord, FaGithub, FaInstagram } from 'react-icons/fa'
 
-import GitHubIcon from '@mui/icons-material/GitHub';
-
-
-const Footer = () => (
-  <ThemeProvider theme={theme}>
-    <Box
-      textAlign={'center'}
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        height: 'fit-content',
-        width: '100%',
+const SocialButton = ({children, label, href,}) => {
+  return (
+    <chakra.button
+      bg={useColorModeValue('blackAlpha.100', 'whiteAlpha.100')}
+      rounded={'full'}
+      width={8}
+      height={8}
+      cursor={'pointer'}
+      as={'a'}
+      href={href}
+      display={'inline-flex'}
+      alignItems={'center'}
+      justifyContent={'center'}
+      transition={'background 0.3s ease'}
+      _hover={{
+        bg: useColorModeValue('blackAlpha.200', 'whiteAlpha.200'),
       }}>
-      <IconButton
-        variant={'outlined'}
-        href={'https://github.com/rxfa'}
-      >
-        <GitHubIcon />
-      </IconButton>
-      <Typography
-        variant={'subtitle1'}
-        component={'h2'}
-        color={'secondary.text'}
-      >
-          Made by Rxfa
-      </Typography>
-    </Box>
-  </ThemeProvider>
-);
+      <VisuallyHidden>{label}</VisuallyHidden>
+      {children}
+    </chakra.button>
+  )
+}
 
-export default Footer;
+export default function Footer() {
+  return (
+    <Box
+      bg={useColorModeValue('gray.100', 'gray.900')}
+      color={useColorModeValue('gray.700', 'gray.200')}>
+      <Container
+        as={Stack}
+        maxW={'6xl'}
+        py={4}
+        direction={{ base: 'column', md: 'row' }}
+        spacing={4}
+        justify={{ base: 'center', md: 'space-between' }}
+        align={{ base: 'center', md: 'center' }}>
+        <Text> © 2023 Rxfa. All rights reserved</Text>
+        <Spacer/>
+        <Stack direction={'row'} spacing={6}>
+          <SocialButton label={'Github'} href={'#'}>
+            <FaGithub />
+          </SocialButton>
+          <SocialButton label={'Discord'} href={'#'}>
+            <FaDiscord />
+          </SocialButton>
+          <SocialButton label={'Instagram'} href={'#'}>
+            <FaInstagram />
+          </SocialButton>
+        </Stack>
+      </Container>
+    </Box>
+  )
+}

@@ -1,23 +1,26 @@
-import { ThemeProvider } from "@emotion/react";
-import { MoonIcon, SunIcon } from '@chakra-ui/icons'
-import {
-    Box,
-    Flex,
-    Avatar,
-    Text,
-    Button,
-    Menu,
-    MenuButton,
-    MenuList,
-    MenuItem,
-    MenuDivider,
-    useDisclosure,
-    useColorModeValue,
-    Stack,
-    useColorMode,
-    Center,
-  } from '@chakra-ui/react'
+'use client'
 
+import {
+  Box,
+  Flex,
+  Avatar,
+  Text,
+  Button,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuDivider,
+  useDisclosure,
+  useColorModeValue,
+  Stack,
+  useColorMode,
+  Center,
+  useBoolean,
+  Link,
+} from '@chakra-ui/react'
+import { MoonIcon, SunIcon } from '@chakra-ui/icons'
+import { FaHome } from 'react-icons/fa'
 
 const NavLink = (props) => {
   const { children } = props
@@ -38,21 +41,25 @@ const NavLink = (props) => {
   )
 }
 
-function Header(){
-    const { colorMode, toggleColorMode } = useColorMode()
-    const { isOpen, onOpen, onClose } = useDisclosure()
-   
-    return (
-          <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
-            <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-              <Box>Logo</Box>
-    
-              <Flex alignItems={'center'}>
-                <Stack direction={'row'} spacing={7}>
-                  <Button onClick={toggleColorMode}>
-                    {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-                  </Button>
-    
+function Navbar(props) {
+  const { colorMode, toggleColorMode } = useColorMode()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+  return (
+    <>
+      <Box bg={useColorModeValue('gray.100', 'gray.900')}
+      color={useColorModeValue('gray.700', 'gray.200')} px={4}>
+        <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
+            <Button variant={"outline"} leftIcon={<FaHome/>}>
+                Home
+              </Button>
+
+          <Flex alignItems={'center'}>
+            <Stack direction={'row'} spacing={7}>
+              <Button onClick={toggleColorMode}>
+                {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+              </Button>
+              {
+                props.isLoggedIn &&
                   <Menu>
                     <MenuButton
                       as={Button}
@@ -84,12 +91,13 @@ function Header(){
                       <MenuItem>Logout</MenuItem>
                     </MenuList>
                   </Menu>
-                </Stack>
-              </Flex>
-            </Flex>
-          </Box>
-      )
-
+              }
+            </Stack>
+          </Flex>
+        </Flex>
+      </Box>
+    </>
+  )
 }
 
-export default Header;
+export default Navbar;
