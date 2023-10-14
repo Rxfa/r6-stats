@@ -5,6 +5,7 @@ import { useState, useRef, useEffect } from "react";
 import { DeleteAlertComponent } from "./delete";
 import { ViewModalComponent } from "./view";
 import { FilterBox } from "./filter";
+import { SortBox } from "./sort";
 import {
   Bar,
   BarChart,
@@ -90,6 +91,7 @@ function Dashboard(){
   const [ownDEFBan, setOwnDEFBan] = useState("");
   const [oppATKBan, setOppATKBan] = useState("");
   const [oppDEFBan, setOppDEFBan] = useState("");
+  const stackSpacing = 8;
 
   useEffect(() => {
     axios.get("games").then(res => {
@@ -116,23 +118,18 @@ function Dashboard(){
     <Flex 
       direction={"column"}
       flexGrow={1}
-      align={'center'}
+      align={"center"}
       justify={'center'}
       bg={useColorModeValue('gray.200', 'gray.900')}
       color={useColorModeValue('gray.700', 'gray.200')}
     >
-      <Stack direction={"row"} spacing={"auto"}>
-        <Stack 
-          direction={"column"} 
-          spacing={"auto"} 
-          rounded={"2xl"}
-          boxShadow={"2xl"}
-        >
+      <HStack spacing={stackSpacing}>
         <TableComponent/>
+        <Stack spacing={stackSpacing}>
+          <SortBox />
+          <FilterBox />
         </Stack>
-        <Divider orientation="vertical" mx={4} variant="solid" colorScheme="twitter"/>
-        <FilterBox />
-      </Stack>
+      </HStack>
     </Flex>
    ) 
 }

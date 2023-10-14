@@ -68,7 +68,7 @@ function Navbar(props) {
                       minW={0}>
                       <Avatar
                         size={'sm'}
-                        src={'https://avatars.dicebear.com/api/male/username.svg'}
+                        src={'https://en.meming.world/images/en/thumb/1/10/Yellow_Glasses_Guy.jpg/300px-Yellow_Glasses_Guy.jpg'}
                       />
                     </MenuButton>
                     <MenuList alignItems={'center'}>
@@ -76,12 +76,12 @@ function Navbar(props) {
                       <Center>
                         <Avatar
                           size={'2xl'}
-                          src={'https://avatars.dicebear.com/api/male/username.svg'}
+                          src={'https://en.meming.world/images/en/thumb/1/10/Yellow_Glasses_Guy.jpg/300px-Yellow_Glasses_Guy.jpg'}
                         />
                       </Center>
                       <br />
                       <Center>
-                        <p>Username</p>
+                        <p>Rxfa</p>
                       </Center>
                       <br />
                       <MenuDivider />

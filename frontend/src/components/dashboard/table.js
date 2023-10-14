@@ -116,8 +116,10 @@ function TableComponent() {
    */
   return(
     <TableContainer 
-    bg={useColorModeValue('gray.100', 'gray.800')}
-    rounded={"2xl"}>
+     bg={useColorModeValue('gray.100', 'gray.800')}
+     rounded={"2xl"}
+     boxShadow={"2xl"}
+    >
       <Stack direction={"row-reverse"} spacing={"auto"} py={"4"} mx={"6"}>
         {
           checkedGamesIds.length >= 1 ? (
