@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router";
-import { setAxiosAuthToken, defaultTime } from "../../utils/utils";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import { setAxiosAuthToken, defaultTime, unsetCurrentUser, setToken } from "../../utils/utils";
 import {
     Flex,
     FormControl,
@@ -102,16 +102,6 @@ function SignIn(props) {
         setTimeout(() => navigate(redirectTo), 3000);
     };
 
-    const setToken = token => {
-        setAxiosAuthToken(token);
-        localStorage.setItem("token", token);
-    };
-
-    const unsetCurrentUser = () => {
-        setAxiosAuthToken("");
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-    };
 
     return (
         <Flex>

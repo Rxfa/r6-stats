@@ -1,4 +1,4 @@
-import theme from "../themes/theme";
+import theme from "../../themes/theme";
 import { ThemeProvider } from "@mui/material";
 import { Box } from "@mui/material";
 

@@ -1,10 +1,10 @@
 import './App.css';
 import { ChakraProvider, Stack, useBoolean } from '@chakra-ui/react'
-import Table from './components/table';
+import Table from './components/dashboard/table';
 import { useState, useEffect } from 'react';
-import { Router, Route, Routes } from "react-router";
+import { Router, Route, Routes, useNavigate } from "react-router";
 import LoginBox from './components/login/loginForm';
-import { isLogged } from './utils/utils';
+import { userToken } from './utils/utils';
 import axios from "axios";
 import Footer from './components/footer';
 import Navbar from './components/header';
@@ -13,14 +13,21 @@ axios.defaults.baseURL = 'http://localhost:8000';
 
 
 const App = () =>{
-  const [isLoggedIn, setIsLoggedIn] = useBoolean()
-  useEffect(() => {
-    if(isLogged){
-      setIsLoggedIn.on()
-    } else {
+  const navigate = useNavigate();
+  const [isLoggedIn, setIsLoggedIn] = useBoolean();
+
+  const checkUserToken = () => {
+    if(!userToken || userToken === undefined){
       setIsLoggedIn.off()
+      navigate("/")
+    } else {
+      setIsLoggedIn.on()
+      navigate("/dashboard")
     }
-  }, [setIsLoggedIn])
+  }
+
+  useEffect(() => { checkUserToken() }, [isLoggedIn]);
+
   return (
     <ChakraProvider>
       <Stack 
@@ -28,8 +35,8 @@ const App = () =>{
         minH={"full"}>
             <Navbar isLoggedIn={isLoggedIn}/>
             <Routes>
-              <Route path="/" element={<LoginBox />} />
-              <Route path="/dashboard" element={<Table />} />
+              <Route path="/" element={<LoginBox /> }/>
+              <Route path="/dashboard" element={<Table />}/>
             </Routes>
             <Footer/>
       </Stack>
