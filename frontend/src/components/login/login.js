@@ -8,7 +8,7 @@ import { Flex, useColorModeValue } from '@chakra-ui/react';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 
-function LoginBox(){
+function Login(){
     const [status, setStatus] = useState("SignIn");
     const handleClick = (status) => setStatus(status);
     return(
@@ -21,7 +21,7 @@ function LoginBox(){
             {(() => {
                 switch(status) {
                     case 'SignIn':
-                        return <SignIn handleClick={handleClick} />
+                        return <SignIn handleClick={handleClick}/>
                     case 'SignUp':
                         return <SignUp handleClick={handleClick} />
                     case 'ForgotPassword':
@@ -36,4 +36,4 @@ function LoginBox(){
     )
 }
 
-export default LoginBox;
+export default Login;

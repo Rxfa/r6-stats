@@ -5,7 +5,6 @@ import { useState, useRef, useEffect } from "react";
 import { AddModalComponent } from "./add";
 import { DeleteAlertComponent } from "./delete";
 import { ViewModalComponent } from "./view";
-import { FilterBox } from "./filter";
 import {
   Bar,
   BarChart,
@@ -85,24 +84,29 @@ function TableComponent() {
   const [oppDEFBan, setOppDEFBan] = useState("");
 
   useEffect(() => {
-    axios.get("games").then(res => {
-      setGames(res.data.results);
-      console.log(res.data.results);
-    }).catch(error => {
-      console.error(error);
-    });
+    axios
+      .get("games")
+      .then(
+        res => {
+          setGames(res.data.results);
+          console.log(res.data.results);
+        })
+      .catch(error => console.error(error));
   }, []);
 
   useEffect(() => {
-    axios.get(
+    axios
+    .get(
       `games/?date=${date}&id=${checkedGamesIds}&map=${playedMap}&own_score=${ownScore}&opp_score=${oppScore}&own_atk_ban=${ownATKBan}&own_def_ban=${ownDEFBan}&opp_atk_ban=${oppATKBan}&opp_def_ban=${oppDEFBan}`
-      ).then(res => {
+    )
+    .then(
+      res => {
         setGames(res.data.results);
-      setCheckedGames(res.data.results);
-      console.log(res.data.results);
-    }).catch(error => {
-      console.error(error);
-    });
+        setCheckedGames(res.data.results);
+        console.log(res.data.results);
+      }
+    )
+    .catch(error => console.error(error));
   }, [checkedGamesIds, date, oppATKBan, oppDEFBan, oppScore, ownATKBan, ownDEFBan, ownScore, playedMap]);
 
   /**
@@ -111,98 +115,85 @@ function TableComponent() {
    * ???Make it a function called on click???
    */
   return(
-    <Flex 
-      direction={"column"}
-      minH={'100vh'}
-      align={'center'}
-      justify={'center'}
-      bg={useColorModeValue('gray.50', 'gray.800')}
-    >
-      <Stack direction={"row"} spacing={"auto"}>
-        <Stack 
-          direction={"column"} 
-          spacing={"auto"} 
-          rounded={"2xl"}
-          boxShadow={"2xl"}
-        >
-          <Stack direction={"row-reverse"} spacing={"auto"} py={"4"} mx={"6"}>
-            {
-              checkedGamesIds.length >= 1 ? (
-                <>
-                  <DeleteAlertComponent />
-                  <ViewModalComponent />
-                </>
-              ) : checkedGamesIds.length === 0 ? (
-                <AddModalComponent />
-              ) : null
-            }
-          </Stack>
-          <TableContainer>
-            <Table size="lg">
-              <Thead>
-                <Th>
-                  <Checkbox
-                  isChecked={checkedGamesIds.length === games.map(row => row.id).length}
-                  onChange={() => {
-                    const gameIds = games.map(row => row.id)
-                    if (checkedGamesIds.length === gameIds.length){
-                      setCheckedGamesIds([])
-                    } else {
-                      setCheckedGamesIds(gameIds)
-                    }
-                  }}
-                  >
-                    ID
-                  </Checkbox>
-                </Th>
-                <Th>Date</Th>
-                <Th>Map</Th>
-                <Th>Score</Th>
-                <Th>Own - ATK ban</Th>
-                <Th>Own - DEF ban</Th>
-                <Th>Opp - ATK ban</Th>
-                <Th>Opp - DEF ban</Th>
-              </Thead>
-              <Tbody>
-                {
-                  games.map(row => (
-                    <Tr>
-                      <Td>
-                        <Checkbox
-                        isChecked={
-                          checkedGamesIds.includes(row.id)
-                        }
-                        onChange={() => {
-                          console.log(checkedGamesIds)
-                          const idx = checkedGamesIds.indexOf(row.id)
-                          if(idx !== -1){
-                            setCheckedGamesIds([...checkedGamesIds.slice(0, idx), ...checkedGamesIds.slice(idx+1)])
-                          } else {
-                            setCheckedGamesIds([...checkedGamesIds, row.id])
-                          }
-                        }}
-                        >
-                          {row.id}
-                        </Checkbox>
-                      </Td>
-                      <Td>{row.date}</Td>
-                      <Td>{row.map}</Td>
-                      <Td>{row.score}</Td>
-                      <Td>{row.own_atk_ban}</Td>
-                      <Td>{row.own_def_ban}</Td>
-                      <Td>{row.opp_atk_ban}</Td>
-                      <Td>{row.opp_def_ban}</Td>
-                    </Tr>
-                  ))
-                }
-              </Tbody>
-            </Table>
-          </TableContainer>
-        </Stack>
-        <Divider orientation="vertical" mx={4} variant="solid" colorScheme="twitter"/>
-        <FilterBox />
+    <TableContainer 
+    bg={useColorModeValue('gray.100', 'gray.800')}
+    rounded={"2xl"}>
+      <Stack direction={"row-reverse"} spacing={"auto"} py={"4"} mx={"6"}>
+        {
+          checkedGamesIds.length >= 1 ? (
+            <>
+              <DeleteAlertComponent />
+              <ViewModalComponent />
+            </>
+          ) : checkedGamesIds.length === 0 ? (
+            <AddModalComponent />
+          ) : null
+        }
       </Stack>
-    </Flex>
+      <Table size="lg">
+        <Thead>
+          <Th>
+            <Checkbox
+              size={"lg"}
+              colorScheme="messenger"
+              isChecked={checkedGamesIds.length === games.map(row => row.id).length}
+              onChange={() => {
+                const gameIds = games.map(row => row.id)
+                if (checkedGamesIds.length === gameIds.length){
+                  setCheckedGamesIds([])
+                } else {
+                  setCheckedGamesIds(gameIds)
+                }
+              }}
+            >
+              ID
+            </Checkbox>
+          </Th>
+          <Th>Date</Th>
+          <Th>Map</Th>
+          <Th>Score</Th>
+          <Th>Own - ATK ban</Th>
+          <Th>Own - DEF ban</Th>
+          <Th>Opp - ATK ban</Th>
+          <Th>Opp - DEF ban</Th>
+        </Thead>
+        <Tbody>
+          {
+            games.map(row => (
+              <Tr>
+                <Td>
+                  <Checkbox
+                    colorScheme="messenger"
+                    size={"lg"}
+                    isChecked={
+                      checkedGamesIds.includes(row.id)
+                    }
+                    onChange={() => {
+                      console.log(checkedGamesIds)
+                      const idx = checkedGamesIds.indexOf(row.id)
+                      if(idx !== -1){
+                        setCheckedGamesIds([...checkedGamesIds.slice(0, idx), ...checkedGamesIds.slice(idx+1)])
+                      } else {
+                        setCheckedGamesIds([...checkedGamesIds, row.id])
+                      }
+                    }}
+                  >
+                    {row.id}
+                  </Checkbox>
+                </Td>
+                <Td>{row.date}</Td>
+                <Td>{row.map}</Td>
+                <Td>{row.score}</Td>
+                <Td>{row.own_atk_ban}</Td>
+                <Td>{row.own_def_ban}</Td>
+                <Td>{row.opp_atk_ban}</Td>
+                <Td>{row.opp_def_ban}</Td>
+              </Tr>
+            ))
+          }
+        </Tbody>
+      </Table>
+    </TableContainer>
   );
 }
 

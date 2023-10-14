@@ -46,8 +46,7 @@ function Navbar(props) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   return (
     <>
-      <Box bg={useColorModeValue('gray.100', 'gray.900')}
-      color={useColorModeValue('gray.700', 'gray.200')} px={4}>
+      <Box bg={useColorModeValue('gray.200', 'gray.900')} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
             <Button variant={"outline"} leftIcon={<FaHome/>}>
                 Home

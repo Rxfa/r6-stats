@@ -68,7 +68,7 @@ export function DeleteAlertComponent() {
     const cancelRef = useRef();
     return(
       <>
-      <Button colorScheme="red" leftIcon={<DeleteIcon />} maxWidth={"max-content"} onClick={onOpen}>
+      <Button colorScheme="red" variant={"outline"} maxWidth={"max-content"} onClick={onOpen}>
         Delete
       </Button>
   

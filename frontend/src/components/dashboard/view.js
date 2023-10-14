@@ -76,10 +76,9 @@ export function ViewModalComponent(games){
     //)
     return(
         <>
-            <Button colorScheme="messenger" mr={6} leftIcon={<ViewIcon />} maxWidth={"max-content"} onClick={onOpen}>
-                View
+            <Button colorScheme="messenger" mr={6} variant={"outline"} maxWidth={"max-content"} onClick={onOpen}>
+              View
             </Button>
-  
             <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom" size="xl">
                 <ModalOverlay />
                 <ModalContent>

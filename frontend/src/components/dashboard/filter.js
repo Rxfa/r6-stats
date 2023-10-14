@@ -2,6 +2,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import {
     Box,
+    Button,
     Flex,
     FormControl,
     FormLabel,
@@ -10,6 +11,7 @@ import {
     Select,
     Divider,
     Heading,
+    useColorModeValue,
 } from '@chakra-ui/react';
 
 export function FilterBox(props){
@@ -51,10 +53,11 @@ export function FilterBox(props){
        align={"center"}
       >
         <Stack 
-         rounded={"xl"}
+         rounded={"2xl"}
          spacing={4}
          p={4}
          boxShadow={"2xl"}
+         bg={useColorModeValue('gray.100', 'gray.800')}
         >
           <Heading textAlign={"center"}>Filters</Heading>
           <Divider direction={"horizontal"} />
@@ -80,54 +83,55 @@ export function FilterBox(props){
               }
             </Select>
           </FormControl>
-          <HStack spacing={4}>
+          <HStack spacing={6}>
             <Box>
               <FormControl id="ownATKBan">
                 <FormLabel textAlign={"center"}>Own ATK ban</FormLabel> 
-                <Select placeholder="Select">
-                  {
-                    atkOps.map((val, idx) => <option value={`${val}${idx}`}>{val}</option>)
-                  }  
-                </Select> 
+                  <Select placeholder="Select">
+                    {
+                      atkOps.map((val, idx) => <option value={`${val}${idx}`}>{val}</option>)
+                    }  
+                  </Select> 
               </FormControl>
             </Box>
             <Box>
               <FormControl id="ownDEFBan">
                 <FormLabel textAlign={"center"}>Own DEF ban</FormLabel>
-                <Select placeholder="Select">
-                  {
-                    defOps.map((val, idx) => 
-                      <option value={`${val}${idx}`}>{val}</option>
-                    )
-                  } 
-                </Select> 
+                  <Select placeholder="Select">
+                    {
+                      defOps.map((val, idx) => 
+                        <option value={`${val}${idx}`}>{val}</option>
+                      )
+                    } 
+                  </Select> 
               </FormControl>
             </Box>
           </HStack>
-          <HStack>
-          <Box>
+          <HStack spacing={6}>
+            <Box>
               <FormControl id="oppATKBan"> 
                 <FormLabel textAlign={"center"}>Opp ATK ban</FormLabel> 
-                <Select placeholder="Select">
-                  {
-                    atkOps.map((val, idx) => <option value={`${val}${idx}`}>{val}</option>)
-                  }  
-                </Select>      
+                  <Select placeholder="Select">
+                    {
+                      atkOps.map((val, idx) => <option value={`${val}${idx}`}>{val}</option>)
+                    }  
+                  </Select>      
               </FormControl>
             </Box>
             <Box>
               <FormControl id="oppDEFBan"> 
                 <FormLabel textAlign={"center"}>Opp DEF ban</FormLabel>
-                <Select placeholder="Select">
-                  {
-                    defOps.map((val, idx) => 
-                      <option value={`${val}${idx}`}>{val}</option>
-                    )
-                  } 
-                </Select>
+                  <Select placeholder="Select">
+                    {
+                      defOps.map((val, idx) => 
+                        <option value={`${val}${idx}`}>{val}</option>
+                      )
+                    } 
+                  </Select>
               </FormControl>
             </Box>
           </HStack>
+          <Button colorScheme="messenger">Search </Button>
         </Stack>
       </Flex>
     )

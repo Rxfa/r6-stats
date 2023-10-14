@@ -40,30 +40,7 @@ function SignIn(props) {
             const userData = new FormData()
             userData.append('username', username)
             userData.append('password', password)
-            axios
-                .post("api/token/login/", userData)
-                .then(response => {
-                    const { auth_token } = response.data;
-                    setAxiosAuthToken(auth_token);
-                    setToken(auth_token);
-                    getCurrentUser("dashboard");
-                })
-                .catch(error => {
-                    unsetCurrentUser();
-                    if(error.response.data){
-                        for(const [_, value] of Object.entries(error.response.data)){
-                            value.map(item => 
-                                toast({
-                                    title: "Error",
-                                    description: item,
-                                    status: "error",
-                                    duration: defaultTime,
-                                    isClosable: true
-                                })
-                            )
-                        }
-                    }
-                });     
+            login(userData);     
         } else{
             toast({
                 title: 'Error',
@@ -73,6 +50,33 @@ function SignIn(props) {
                 isClosable: true
             })
         }
+    }
+
+    const login = (userData) => {
+        axios
+            .post("api/token/login/", userData)
+            .then(response => {
+                const { auth_token } = response.data;
+                setAxiosAuthToken(auth_token);
+                setToken(auth_token);
+                getCurrentUser("dashboard");
+            })
+            .catch(error => {
+                unsetCurrentUser();
+                if(error.response.data){
+                    for(const [_, value] of Object.entries(error.response.data)){
+                        value.map(item => 
+                            toast({
+                                title: "Error",
+                                description: item,
+                                status: "error",
+                                duration: defaultTime,
+                                isClosable: true
+                            })
+                        )
+                    }
+                }
+            }); 
     }
 
     const getCurrentUser = redirectTo => {
@@ -99,7 +103,9 @@ function SignIn(props) {
             duration: defaultTime,
             isClosable: true
         })
-        setTimeout(() => navigate(redirectTo), 3000);
+        setTimeout(() => {
+            navigate(redirectTo);
+        }, 1500);
     };
 
 

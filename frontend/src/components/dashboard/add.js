@@ -30,7 +30,7 @@ export function AddModalComponent(){
     const { isOpen, onOpen, onClose } = useDisclosure()
     return(
         <>
-            <Button colorScheme="messenger" leftIcon={<AddIcon />} maxWidth={"max-content"} onClick={onOpen}>
+            <Button colorScheme="messenger" variant={"outline"} maxWidth={"max-content"} onClick={onOpen}>
               Add
             </Button>
 

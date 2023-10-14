@@ -1,5 +1,7 @@
 import axios from "axios";
 
+axios.defaults.baseURL = 'http://localhost:8000';
+
 export const setToken = token => {
   setAxiosAuthToken(token);
   localStorage.setItem("token", token);
@@ -19,6 +21,15 @@ export const setAxiosAuthToken = token => {
     // Delete auth header
     delete axios.defaults.headers.common["Authorization"];
   }
+};
+
+export const logout = () => {
+  axios
+    .post("/api/token/logout/")
+    .then(response => {
+    })
+    .catch(error => {
+    });
 };
 
 export const userToken = localStorage.getItem("token");
