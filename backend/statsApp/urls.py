@@ -25,9 +25,6 @@ from core import views
 
 router = routers.DefaultRouter()
 
-# router.register(r'token', TokenObtainPairView.as_view())
-# router.register(r'token/refresh', TokenRefreshView.as_view())
-
 router.register(r"users", views.UserViewSet)
 router.register(r"games", views.GameViewSet)
 router.register(r"upload", views.UploadViewSet)

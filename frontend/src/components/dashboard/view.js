@@ -1,42 +1,21 @@
-import { useState, useRef, useEffect } from "react";
-import { ChartData } from "./data";
-import {
-    AddIcon,
-    ChevronDownIcon,
-    DeleteIcon,
-    ViewIcon
-  } from '@chakra-ui/icons';
+import { useState } from "react";
+import { ChevronDownIcon } from '@chakra-ui/icons';
   import {
     Bar,
     BarChart,
-    ResponsiveContainer
+    PieChart,
+    Pie,
+    ResponsiveContainer,
+    Cell,
+    LabelList
   } from "recharts";
+import { StatsTable } from "../stats/statsTable";
+import { individualStats } from "./data";  
 import {
-    AlertDialog,
-    AlertDialogBody,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogContent,
-    AlertDialogOverlay,
-    AlertDialogCloseButton,
-    Box,
-    Checkbox,
-    IconButton,
-    Flex,
-    FormControl,
-    FormLabel,
-    HStack,
-    FormErrorMessage,
-    FormHelperText,
-    Input,
     Menu,
     MenuButton,
     MenuList,
     MenuItem,
-    MenuItemOption,
-    MenuGroup,
-    MenuOptionGroup,
-    MenuDivider,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -55,31 +34,25 @@ import {
     Tr,
     Th,
     Td,
-    TableCaption,
-    TableContainer,
-    RadioGroup,
-    Radio,
-    Stack,
     useDisclosure,
-    useColorModeValue,
     Button,
-    Select,
     Divider,
-    Heading,
+    Text,
+    HStack,
+    Stack
   } from '@chakra-ui/react';
+import { Pies } from "../stats/pies";
 
 export function ViewModalComponent(games){
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [selectedMap, setSelectedMap] = useState([]);
-    //const maps = useConst(() => 
-    //  games.map(game => (game.map)).filter((val, idx, self) => (idx === self.indexOf(val)))
-    //)
+
     return(
         <>
             <Button colorScheme="messenger" mr={6} variant={"outline"} maxWidth={"max-content"} onClick={onOpen}>
               View
             </Button>
-            <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom" size="xl">
+            <Modal isOpen={isOpen} onClose={onClose} motionPreset="slideInBottom" size="full">
                 <ModalOverlay />
                 <ModalContent>
                     <ModalHeader>Stats</ModalHeader>
@@ -92,7 +65,7 @@ export function ViewModalComponent(games){
                               <Tab>Individual</Tab>
                           </TabList>
                           <TabPanels>
-                                <TabPanel>
+                                <TabPanel id="general">
                                   <Menu>
                                     <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
                                       Map
@@ -117,34 +90,24 @@ export function ViewModalComponent(games){
                                           */}
                                     </MenuList>
                                   </Menu>
+                                  {
+                                  /*
                                   <ResponsiveContainer maxWidth="100%" maxHeight="100%">
                                       <BarChart width={140} height={40} data={ChartData(games, selectedMap)}>
                                         {
-                                          /*
+                                          
                                             <Bar dataKey={}/>
-                                           */
+                                           
                                         }
                                       </BarChart>
                                   </ResponsiveContainer>
+                                  */}
                                 </TabPanel>
                                 {
-                                  games.length === 1 &&
-                                  <TabPanel>
-                                    <Table variant="simple">
-                                      <Thead>
-                                          <Tr>
-                                              <Th>Number</Th>
-                                              <Th>Map</Th>
-                                              <Th>Site</Th>
-                                              <Th>Side</Th>
-                                              <Th>Won</Th>
-                                              <Th>Win Condition</Th>
-                                          </Tr>
-                                      </Thead>
-                                      <Tbody>
-                                        {}
-                                      </Tbody>
-                                    </Table>
+                                  //games.length === 1 &&
+                                  <TabPanel id="individual">
+                                    <StatsTable />
+                                    <Pies />
                                   </TabPanel> 
                                 }
                                 <TabPanel></TabPanel>

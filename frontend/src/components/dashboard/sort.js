@@ -1,13 +1,10 @@
 import {
-    Box,
     Button,
     Flex,
     FormControl,
     FormLabel,
-    HStack,
     Stack,
     Select,
-    Divider,
     Heading,
     useColorModeValue,
 } from '@chakra-ui/react';
@@ -23,7 +20,7 @@ export function SortBox(){
                 spacing={4}
                 p={4}
                 boxShadow={"2xl"}
-                bg={useColorModeValue('gray.100', 'gray.800')}
+                bg={useColorModeValue('white', 'gray.800')}
                 flexGrow={1}
             >
                 <Heading textAlign={"center"}>Sort</Heading>

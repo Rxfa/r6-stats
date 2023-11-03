@@ -26,11 +26,20 @@ export const setAxiosAuthToken = token => {
 export const logout = () => {
   axios
     .post("/api/token/logout/")
-    .then(response => {
-    })
-    .catch(error => {
-    });
+    .then(response => {})
+    .catch(error => {});
+    
+    unsetCurrentUser();
 };
+
+export const isLogged = () => {
+  if(!userToken || userToken === undefined){
+    return false;
+  }
+  return true;
+}
+
+export const getUser = () => JSON.parse(localStorage.getItem("user"))
 
 export const userToken = localStorage.getItem("token");
 

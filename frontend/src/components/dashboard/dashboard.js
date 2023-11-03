@@ -1,80 +1,16 @@
-import { ThemeProvider } from "@emotion/react";
-import theme from "../../themes/theme";
 import axios from "axios";
-import { useState, useRef, useEffect } from "react";
-import { DeleteAlertComponent } from "./delete";
-import { ViewModalComponent } from "./view";
+import { useState, useEffect } from "react";
 import { FilterBox } from "./filter";
 import { SortBox } from "./sort";
 import {
-  Bar,
-  BarChart,
-  ResponsiveContainer
-} from "recharts";
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogCloseButton,
-  Box,
-  Checkbox,
-  IconButton,
   Flex,
-  FormControl,
-  FormLabel,
   HStack,
-  FormErrorMessage,
-  FormHelperText,
-  Input,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Tabs, 
-  TabList, 
-  TabPanels, 
-  Tab, 
-  TabPanel,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  RadioGroup,
-  Radio,
   Stack,
-  useDisclosure,
   useColorModeValue,
-  Button,
-  Select,
-  Divider,
-  Heading,
 } from '@chakra-ui/react';
-
-import {
-  AddIcon,
-  ChevronDownIcon,
-  DeleteIcon,
-  ViewIcon
-} from '@chakra-ui/icons';
 import TableComponent from "./table";
+import { isLogged } from "../../utils/utils";
+import { useNavigate } from "react-router";
 
 axios.defaults.baseURL = 'http://localhost:8000';
 
@@ -91,6 +27,7 @@ function Dashboard(){
   const [ownDEFBan, setOwnDEFBan] = useState("");
   const [oppATKBan, setOppATKBan] = useState("");
   const [oppDEFBan, setOppDEFBan] = useState("");
+  const navigate = useNavigate();
   const stackSpacing = 8;
 
   useEffect(() => {

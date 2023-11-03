@@ -1,70 +1,19 @@
-import { ThemeProvider } from "@emotion/react";
-import theme from "../../themes/theme";
 import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 import { AddModalComponent } from "./add";
 import { DeleteAlertComponent } from "./delete";
 import { ViewModalComponent } from "./view";
 import {
-  Bar,
-  BarChart,
-  ResponsiveContainer
-} from "recharts";
-import {
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogCloseButton,
-  Box,
   Checkbox,
-  IconButton,
-  Flex,
-  FormControl,
-  FormLabel,
-  HStack,
-  FormErrorMessage,
-  FormHelperText,
-  Input,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Tabs, 
-  TabList, 
-  TabPanels, 
-  Tab, 
-  TabPanel,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
-  RadioGroup,
-  Radio,
   Stack,
-  useDisclosure,
   useColorModeValue,
-  Button,
-  Select,
-  Divider,
-  Heading,
 } from '@chakra-ui/react';
 
 axios.defaults.baseURL = 'http://localhost:8000';
@@ -116,7 +65,7 @@ function TableComponent() {
    */
   return(
     <TableContainer 
-     bg={useColorModeValue('gray.100', 'gray.800')}
+     bg={useColorModeValue('white', 'gray.800')}
      rounded={"2xl"}
      boxShadow={"2xl"}
     >

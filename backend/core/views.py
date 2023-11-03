@@ -18,6 +18,8 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.prefetch_related("games").order_by("-date_joined")
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ["username"]
 
 
 class GameViewSet(viewsets.ReadOnlyModelViewSet):

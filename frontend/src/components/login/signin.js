@@ -56,8 +56,8 @@ function SignIn(props) {
         axios
             .post("api/token/login/", userData)
             .then(response => {
+                console.log(response);
                 const { auth_token } = response.data;
-                setAxiosAuthToken(auth_token);
                 setToken(auth_token);
                 getCurrentUser("dashboard");
             })
@@ -105,7 +105,7 @@ function SignIn(props) {
         })
         setTimeout(() => {
             navigate(redirectTo);
-        }, 1500);
+        }, 500);
     };
 
 

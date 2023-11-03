@@ -92,24 +92,34 @@ class Player(models.Model):
 
     @property
     def entry_diff(self):
-        return self.entry_kills - self.entry_deaths
+        """Entry differential"""
+        return (self.entry_kills - self.entry_deaths)
 
     @property
     def kpr(self):
-        return self.kills / self.rounds
+        """Kills per round"""
+        kpr = (self.kills / self.rounds)
+        return f"{kpr:.2f}"
 
     @property
     def kd_ratio(self):
-        return self.kills / self.deaths
+        """Kill/Death ratio"""
+        kd = self.kills / self.deaths
+        return f"{kd:.2f}"
 
     @property
     def srv(self):
-        return (self.rounds - self.deaths) / self.rounds
+        """Survival rate"""
+        srv_ratio = (self.rounds - self.deaths) / self.rounds
+        return f"{srv_ratio:.0%}"
 
     @property
     def kd_diff(self):
+        """Kill/Death differential"""
         return self.kills - self.deaths
 
     @property
     def hs_percentage(self):
-        return f"{(self.headshots / self.rounds) * 100}%"
+        """Headshot percentage"""
+        hs_ratio = (self.headshots / self.rounds)
+        return f"{hs_ratio:.0%}"

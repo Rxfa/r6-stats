@@ -60,7 +60,7 @@ export function FilterBox(props){
          spacing={4}
          p={4}
          boxShadow={"2xl"}
-         bg={useColorModeValue('gray.100', 'gray.800')}
+         bg={useColorModeValue('white', 'gray.800')}
         >
           <Heading textAlign={"center"}>Filters</Heading>
           <FormControl id="result">

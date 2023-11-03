@@ -16,7 +16,7 @@ function Login(){
             flexGrow={1}
             align={'center'}
             justify={'center'}
-            bg={useColorModeValue('gray.100', 'gray.800')}
+            bg={useColorModeValue('gray.200', 'gray.900')}
             >
             {(() => {
                 switch(status) {

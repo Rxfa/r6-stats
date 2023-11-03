@@ -19,8 +19,10 @@ import {
   useBoolean,
   Link,
 } from '@chakra-ui/react'
+import { useNavigate } from "react-router";
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import { FaHome } from 'react-icons/fa'
+import { getUser, logout, isLogged } from '../utils/utils';
 
 const NavLink = (props) => {
   const { children } = props
@@ -42,13 +44,31 @@ const NavLink = (props) => {
 }
 
 function Navbar(props) {
-  const { colorMode, toggleColorMode } = useColorMode()
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { colorMode, toggleColorMode } = useColorMode();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const navigate = useNavigate();
+  const user = getUser();
+
+  const handleHome = () => {
+    navigate("/dashboard");
+  }
+
+  const handleProfile = () => {
+    navigate("/profile");
+  }
+
+  const handleLogout = () => {
+    logout();
+    if(!isLogged()){
+      navigate("/");
+    }
+  }
+
   return (
     <>
       <Box bg={useColorModeValue('gray.200', 'gray.900')} px={4}>
         <Flex h={16} alignItems={'center'} justifyContent={'space-between'}>
-            <Button variant={"outline"} leftIcon={<FaHome/>}>
+            <Button variant={"outline"} leftIcon={<FaHome/>} onClick={handleHome}>
                 Home
               </Button>
 
@@ -58,7 +78,7 @@ function Navbar(props) {
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
               {
-                props.isLoggedIn &&
+                isLogged() &&
                   <Menu>
                     <MenuButton
                       as={Button}
@@ -81,13 +101,12 @@ function Navbar(props) {
                       </Center>
                       <br />
                       <Center>
-                        <p>Rxfa</p>
+                        <p>{user.username}</p>
                       </Center>
                       <br />
                       <MenuDivider />
-                      <MenuItem>Your Servers</MenuItem>
-                      <MenuItem>Account Settings</MenuItem>
-                      <MenuItem>Logout</MenuItem>
+                      <MenuItem onClick={handleProfile}>Account Settings</MenuItem>
+                      <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </MenuList>
                   </Menu>
               }
