@@ -3,8 +3,8 @@ import argparse
 import json
 import os
 import sys
-from statsScript.game import Match
-from statsScript.utils import timer
+from game import Match
+from utils import timer
 
 
 @timer
