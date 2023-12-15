@@ -46,3 +46,4 @@ class RoundSerializer(serializers.ModelSerializer):
 
 class GameSerializer(serializers.Serializer):
     Rounds = RoundSerializer(many=True, read_only=True)
+

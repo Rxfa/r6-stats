@@ -25,7 +25,7 @@ export const setAxiosAuthToken = token => {
 
 export const logout = () => {
   axios
-    .post("/api/token/logout/")
+    .post("/api/logout/")
     .then(response => {})
     .catch(error => {});
     

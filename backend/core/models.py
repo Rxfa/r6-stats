@@ -15,10 +15,14 @@ class RoundReplay(models.Model):
     )
 
 
+class Game(models.Model):
+    match_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+
 class Round(models.Model):
     replay = models.OneToOneField(RoundReplay, on_delete=models.PROTECT, primary_key=True)
     dateTime = models.DateTimeField()
-    match_id = models.CharField(max_length=50)
+    match_id = models.ForeignKey(Game, on_delete=models.CASCADE)
     number = models.PositiveIntegerField()
     map = models.CharField(max_length=50)
     own_score = models.PositiveIntegerField()

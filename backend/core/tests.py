@@ -1,7 +1,5 @@
-import json
-from django.contrib.auth.models import User
-from rest_framework.test import APITestCase
-from rest_framework import status
+from datetime import timedelta
 
+from django.test import TestCase
+from .models import Game
 
-# Create your tests here.
