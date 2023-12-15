@@ -100,5 +100,15 @@ class Player(models.Model):
             raise ValidationError(_("Player cannot plant and defuse in the same round"))
         if (self.opening_kill and not self.entry_kill) or (self.opening_death and not self.entry_death):
             raise ValidationError(_("Player has opening but no entry"))
+        if (
+                (self.planted and self.time_of_plant is None) or
+                (self.disabled and self.time_of_plant is None)
+        ):
+            raise ValidationError() #TODO: Write error message
+        if (
+                (not self.planted and self.time_of_plant is not None) or
+                (not self.disabled and self.time_of_plant is not None)
+        ):
+            raise ValidationError()  # TODO: Write error message
         if self.time_of_plant > 180 or self.time_of_disable > 180:
             raise ValidationError(_("Invalid time for objective play"))
