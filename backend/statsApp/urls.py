@@ -21,6 +21,7 @@ from core import views
 
 router = routers.DefaultRouter()
 router.register(r'replays', views.FileUploadViewSet)
+router.register(r'games', views.GameViewSet)
 
 urlpatterns = [
     path("api/", include("rest_framework.urls", namespace="rest_framework")),

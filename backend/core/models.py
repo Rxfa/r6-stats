@@ -7,14 +7,9 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import FileExtensionValidator
 
 
-class GameReplay(models.Model):
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-
 class RoundReplay(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    game = models.ForeignKey(GameReplay, on_delete=models.CASCADE)
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
     file = models.FileField(
         upload_to="replays",
     )
@@ -24,8 +19,8 @@ class Round(models.Model):
     replay = models.OneToOneField(RoundReplay, on_delete=models.PROTECT, primary_key=True)
     dateTime = models.DateTimeField()
     match_id = models.CharField(max_length=50)
-    map = models.CharField(max_length=50)
     number = models.PositiveIntegerField()
+    map = models.CharField(max_length=50)
     own_score = models.PositiveIntegerField()
     opp_score = models.PositiveIntegerField()
     timestamp = models.DateTimeField(auto_now_add=True)  # Refers to date and time of upload
@@ -37,12 +32,12 @@ class Round(models.Model):
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["match_id", "number"], name="round_id")
+            models.UniqueConstraint(fields=['match_id', 'number'], name="unique_round_id")
         ]
 
 
 class Team(models.Model):
-    round = models.ForeignKey(Round, on_delete=models.CASCADE)
+    round = models.ForeignKey(Round, on_delete=models.CASCADE, related_name="teams")
     is_own = models.BooleanField()
     score = models.PositiveIntegerField()
     won = models.BooleanField()
@@ -56,7 +51,7 @@ class Team(models.Model):
 
 
 class Player(models.Model):
-    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    team = models.ForeignKey(Team, on_delete=models.CASCADE, related_name="players")
     name = models.CharField(max_length=50)
     uid = models.CharField(max_length=50)
     spawn = models.CharField(max_length=50, blank=True, null=True)

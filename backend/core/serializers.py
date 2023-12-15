@@ -6,7 +6,7 @@ from .models import Round, Team, Player, RoundReplay
 class RoundUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoundReplay
-        fields = ("file", )
+        fields = ("file",)
 
 
 class RoundListUploadSerializer(serializers.Serializer):
@@ -14,30 +14,35 @@ class RoundListUploadSerializer(serializers.Serializer):
 
 
 class PlayerSerializer(serializers.ModelSerializer):
+    kost = serializers.SerializerMethodField()
+    multikill = serializers.SerializerMethodField()
+
+    def get_kost(self, obj):
+        return obj.kost
+
+    def get_multikill(self, obj):
+        return obj.multikill
+
     class Meta:
         model = Player
-        fields = (
-            "name", "uid", "spawn", "operator", "kills", "assists", "headshots", "died",
-            "opening_kill", "opening_death", "entry_kill", "entry_death", "refragged",
-            "traded", "planted", "time_of_plant", "disabled", "time_of_disable", "kost",
-            "multikill"
-        )
+        exclude = ["id", "team"]
 
 
 class TeamSerializer(serializers.ModelSerializer):
-    players = PlayerSerializer(many=True)
+    players = PlayerSerializer(many=True, read_only=True)
 
     class Meta:
         model = Team
-        fields = ("is_own", "score", "won", "win_condition", "side", "players")
+        exclude = ["id", "round"]
 
 
 class RoundSerializer(serializers.ModelSerializer):
-    teams = TeamSerializer(many=True)
+    teams = TeamSerializer(many=True, read_only=True)
 
     class Meta:
         model = Round
-        fields = ("number", "timestamp", "site", "teams")
+        exclude = ["replay", "match_id", "timestamp"]
 
 
-
+class GameSerializer(serializers.Serializer):
+    Rounds = RoundSerializer(many=True, read_only=True)
