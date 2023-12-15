@@ -1,4 +1,38 @@
-from .player import *
+import json
+from collections import namedtuple
+
+
+class ReplayToJsonService:
+    def __init__(self, file):
+        self.file = file
+
+    def transform(self):
+        json_file = json.loads(self.file)
+        return Round(json_file)
+
+
+Score = namedtuple("Score", "own opp")
+
+
+class Round:
+
+    def __init__(self, data):
+        if len(data["players"]) != 10:
+            raise Exception("Round must be started with a full lobby(10 players)!")
+        self.dateTime: str = data["timestamp"]
+        self.match_id: str = data["matchID"]
+        self.number: int = data["roundNumber"]
+        self.recordingPlayerId: str = data["recordingPlayerID"]
+        self.map: str = data["map"]
+        self.site: str = data["site"]
+        self.teams: list = [Team(data, idx) for idx, _ in enumerate(data["teams"])]
+        self.score: Score = Score(
+            own=data["teams"][0]["score"],
+            opp=data["teams"][1]["score"]
+        )
+        self.own_bans: str | None = None  # Not possible to get as of August 18th 2023
+        self.opp_bans: str | None = None  # Not possible to get as of August 18th 2023
+
 
 REFRAG_TIME_WINDOW: int = 10
 
@@ -100,3 +134,25 @@ class Team:
 
     def _isTrade(self, event1, event2) -> bool:
         return event1 - event2 <= REFRAG_TIME_WINDOW
+
+
+class Player:
+    def __init__(self, round_data, idx):
+        self.name: str = round_data["players"][idx]["username"]
+        self.uid: str = round_data["players"][idx]["profileID"]
+        self.spawn: str | None = round_data["players"][idx]["spawn"] if "spawn" in round_data["players"][idx] else None
+        self.operator: str = round_data["players"][idx]["operator"]["name"]
+        self.kills: int = round_data["stats"][idx]["kills"]
+        self.assists: int = round_data["stats"][idx]["assists"]
+        self.headshots: int = round_data["stats"][idx]["headshots"]
+        self.died: bool = round_data["stats"][idx]["died"]
+        self.opening_kill: bool = False
+        self.opening_death: bool = False
+        self.entry_kill: bool = False
+        self.entry_death: bool = False
+        self.traded: bool = False
+        self.refragged: bool = False
+        self.planted: bool = False
+        self.time_of_plant: int | None = None
+        self.disabled: bool = False
+        self.time_of_disable: int | None = None
