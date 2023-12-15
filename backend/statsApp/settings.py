@@ -32,7 +32,8 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
@@ -48,8 +49,6 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 50,
 }
 
-DJOSER = {"USER_ID_FIELD": "username"}
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -64,7 +63,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "core.apps.CoreConfig",
     "rest_framework.authtoken",
-    "djoser",
 ]
 
 MIDDLEWARE = [

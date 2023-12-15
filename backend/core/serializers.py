@@ -1,91 +1,43 @@
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Game, Round, Player, JSONUpload, Operator, Map
+from .models import Round, Team, Player, RoundReplay
 
 
-class MapSerializer(serializers.HyperlinkedModelSerializer):
+class RoundUploadSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Map
-        fields = ["name"]
+        model = RoundReplay
+        fields = ("file", )
 
 
-class OperatorSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Operator
-        fields = ["icon", "name", "side"]
+class RoundListUploadSerializer(serializers.Serializer):
+    rounds = serializers.ListField(child=serializers.FileField(allow_empty_file=False))
 
 
 class PlayerSerializer(serializers.ModelSerializer):
-    """Player Serializer"""
-
     class Meta:
         model = Player
-        fields = [
-            "id",
-            "name",
-            "rating",
-            "rounds",
-            "kills",
-            "deaths",
-            "kd_diff",
-            "kd_ratio",
-            "kpr",
-            "headshots",
-            "hs_percentage",
-            "entry_kills",
-            "entry_deaths",
-            "entry_diff",
-            "clutches",
-            "multikills",
-            "plants",
-            "disables",
-            "kost",
-            "srv",
-        ]
+        fields = (
+            "name", "uid", "spawn", "operator", "kills", "assists", "headshots", "died",
+            "opening_kill", "opening_death", "entry_kill", "entry_death", "refragged",
+            "traded", "planted", "time_of_plant", "disabled", "time_of_disable", "kost",
+            "multikill"
+        )
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    players = PlayerSerializer(many=True)
+
+    class Meta:
+        model = Team
+        fields = ("is_own", "score", "won", "win_condition", "side", "players")
 
 
 class RoundSerializer(serializers.ModelSerializer):
-    """Round Serializer"""
+    teams = TeamSerializer(many=True)
 
     class Meta:
         model = Round
-        fields = ["number", "site", "side", "won", "win_condition"]
+        fields = ("number", "timestamp", "site", "teams")
 
 
-class GameSerializer(serializers.ModelSerializer):
-    """Game Serializer"""
 
-    rounds = RoundSerializer(many=True)
-    stats = PlayerSerializer(many=True)
-
-    class Meta:
-        model = Game
-        fields = [
-            "id",
-            "map",
-            "score",
-            "own_atk_ban",
-            "own_def_ban",
-            "opp_atk_ban",
-            "opp_def_ban",
-            "rounds",
-            "stats",
-        ]
-
-
-class UploadSerializer(serializers.HyperlinkedModelSerializer):
-    """JSON file upload Serializer"""
-
-    class Meta:
-        model = JSONUpload
-        fields = ["id", "url"]
-
-
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    """User Serializer"""
-
-    games = GameSerializer(many=True)
-
-    class Meta:
-        model = User
-        fields = ["url", "username", "email", "games"]

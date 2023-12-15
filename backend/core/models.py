@@ -1,125 +1,105 @@
+import uuid
+
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.utils.translation import gettext_lazy as _
 from django.core.validators import FileExtensionValidator
 
 
-# Create your models here.
-class JSONUpload(models.Model):
-    file = models.FileField(upload_to="media/JSON_upload/%Y/%m/%d")
-    upload_date = models.DateTimeField(auto_now_add=True)
+class GameReplay(models.Model):
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
 
-class Map(models.Model):
-    name = models.CharField(max_length=50)
-
-
-class Operator(models.Model):
-    class OperatorSide(models.TextChoices):
-        ATK = "ATK"
-        DEF = "DEF"
-
-    name = models.CharField(max_length=50)
-    icon = models.ImageField(
-        upload_to="media/operators", validators=[FileExtensionValidator(["png", "jpg"])]
+class RoundReplay(models.Model):
+    timestamp = models.DateTimeField(auto_now_add=True)
+    game = models.ForeignKey(GameReplay, on_delete=models.CASCADE)
+    file = models.FileField(
+        upload_to="replays",
     )
-    side = models.CharField(
-        max_length=3, choices=OperatorSide.choices, default=OperatorSide.ATK
-    )
-
-
-class Game(models.Model):
-    date = models.DateField(auto_now_add=True)
-    file = models.ForeignKey(
-        JSONUpload, on_delete=models.SET_NULL, null=True, blank=True
-    )
-    user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="games")
-    map = models.CharField(max_length=20)
-    own_score = models.IntegerField()
-    opp_score = models.IntegerField()
-    own_atk_ban = models.CharField(max_length=20, blank=True)
-    own_def_ban = models.CharField(max_length=20, blank=True)
-    opp_atk_ban = models.CharField(max_length=20, blank=True)
-    opp_def_ban = models.CharField(max_length=20, blank=True)
-    """
-    Bans are not FK because as of Oct 5 2023, 
-    it's not possible to know the operator bans from the game replay file.
-    """
-
-    def __str__(self):
-        return f"#{self.id} - {self.user.username} - {self.map}"
-
-    @property
-    def score(self):
-        return f"{self.own_score}-{self.opp_score}"
-
-    @property
-    def bans(self):
-        return f"{self.own_atk_ban}/{self.own_def_ban} & {self.opp_atk_ban}/{self.opp_def_ban}"
 
 
 class Round(models.Model):
-    game = models.ForeignKey(
-        Game, on_delete=models.CASCADE, related_name="rounds")
-    number = models.IntegerField()
-    site = models.CharField(max_length=20)
-    side = models.CharField(max_length=20)
-    won = models.BooleanField()
-    win_condition = models.CharField(max_length=20)
+    replay = models.OneToOneField(RoundReplay, on_delete=models.PROTECT, primary_key=True)
+    dateTime = models.DateTimeField()
+    match_id = models.CharField(max_length=50)
+    map = models.CharField(max_length=50)
+    number = models.PositiveIntegerField()
+    own_score = models.PositiveIntegerField()
+    opp_score = models.PositiveIntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True)  # Refers to date and time of upload
+    site = models.CharField(max_length=50)
+    own_atk_ban = models.CharField(max_length=50, blank=True, null=True)
+    opp_atk_ban = models.CharField(max_length=50, blank=True, null=True)
+    own_def_ban = models.CharField(max_length=50, blank=True, null=True)
+    opp_def_ban = models.CharField(max_length=50, blank=True, null=True)
 
-    def __str__(self):
-        return (
-            f"#{self.number} [{'WIN' if self.won else 'LOSS'}] {self.side} {self.site}"
-        )
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["match_id", "number"], name="round_id")
+        ]
+
+
+class Team(models.Model):
+    round = models.ForeignKey(Round, on_delete=models.CASCADE)
+    is_own = models.BooleanField()
+    score = models.PositiveIntegerField()
+    won = models.BooleanField()
+    win_condition = models.CharField(max_length=50, blank=True, null=True)
+    side = models.CharField(max_length=50)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["round", "is_own"], name="team_id")
+        ]
 
 
 class Player(models.Model):
-    game = models.ForeignKey(
-        Game, on_delete=models.CASCADE, related_name="stats")
-    name = models.CharField(max_length=20)
-    rounds = models.IntegerField()
-    kills = models.IntegerField()
-    deaths = models.IntegerField()
-    headshots = models.IntegerField()
-    entry_kills = models.IntegerField()
-    entry_deaths = models.IntegerField()
-    clutches = models.IntegerField()
-    multikills = models.IntegerField()
-    plants = models.IntegerField()
-    disables = models.IntegerField()
-    kost = models.FloatField()
-    rating = models.FloatField()
+    team = models.ForeignKey(Team, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+    uid = models.CharField(max_length=50)
+    spawn = models.CharField(max_length=50, blank=True, null=True)
+    operator = models.CharField(max_length=50)
+    kills = models.PositiveIntegerField()
+    assists = models.PositiveIntegerField()
+    headshots = models.PositiveIntegerField()
+    died = models.BooleanField()
+    opening_kill = models.BooleanField()
+    opening_death = models.BooleanField()
+    entry_kill = models.BooleanField()
+    entry_death = models.BooleanField()
+    refragged = models.BooleanField()
+    traded = models.BooleanField()
+    planted = models.BooleanField()
+    time_of_plant = models.PositiveIntegerField(null=True, blank=True)
+    disabled = models.BooleanField()
+    time_of_disable = models.PositiveIntegerField(null=True, blank=True)
 
     @property
-    def entry_diff(self):
-        """Entry differential"""
-        return (self.entry_kills - self.entry_deaths)
+    def kost(self):
+        if (
+                self.kills > 0 or
+                self.planted or
+                self.disabled or
+                not self.died or
+                self.traded
+        ):
+            return 1
+        return 0
 
     @property
-    def kpr(self):
-        """Kills per round"""
-        kpr = (self.kills / self.rounds)
-        return f"{kpr:.2f}"
+    def multikill(self):
+        return self.kills > 1
 
-    @property
-    def kd_ratio(self):
-        """Kill/Death ratio"""
-        kd = self.kills / self.deaths
-        return f"{kd:.2f}"
-
-    @property
-    def srv(self):
-        """Survival rate"""
-        srv_ratio = (self.rounds - self.deaths) / self.rounds
-        return f"{srv_ratio:.0%}"
-
-    @property
-    def kd_diff(self):
-        """Kill/Death differential"""
-        return self.kills - self.deaths
-
-    @property
-    def hs_percentage(self):
-        """Headshot percentage"""
-        hs_ratio = (self.headshots / self.rounds)
-        return f"{hs_ratio:.0%}"
+    def clean(self):
+        if self.assists > self.kills:
+            raise ValidationError(_("The number of assists cannot be higher than the number of kills"))
+        if self.headshots > self.kills:
+            raise ValidationError(_("The number of headshots cannot be higher than the number of kills"))
+        if self.planted and self.disabled:
+            raise ValidationError(_("Player cannot plant and defuse in the same round"))
+        if (self.opening_kill and not self.entry_kill) or (self.opening_death and not self.entry_death):
+            raise ValidationError(_("Player has opening but no entry"))
+        if self.time_of_plant > 180 or self.time_of_disable > 180:
+            raise ValidationError(_("Invalid time for objective play"))

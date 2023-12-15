@@ -1,4 +1,6 @@
-from player import Player
+from .player import *
+
+REFRAG_TIME_WINDOW: int = 10
 
 
 class Team:
@@ -67,6 +69,23 @@ class Team:
             if not is_opening_death and not is_opening_death:
                 return
 
+    def _get_refrags_and_trades(self, data) -> None:
+        killed_player: str | None = None
+        time_of_death: int | None = None
+        for event in data["matchFeedback"]:
+            event_type = event["type"]["name"]
+            if event_type == "Kill":
+                if event["target"] in self.players and event["username"] not in self.players:
+                    killed_player = event["target"]
+                    time_of_death = event["timeInSeconds"]
+                if (
+                        event["username"] in self.players and
+                        event["target"] not in self.players and
+                        self._isTrade(time_of_death, event["timeInSeconds"])
+                ):
+                    self.players[killed_player].traded = True
+                    self.players[event["username"]].refragged = True
+
     def _get_objective_plays(self, data) -> None:
         for event in data["matchFeedback"]:
             event_type = event["type"]["name"]
@@ -79,3 +98,5 @@ class Team:
                 player.disabled = True
                 player.time_of_disable = event["timeInSeconds"]
 
+    def _isTrade(self, event1, event2) -> bool:
+        return event1 - event2 <= REFRAG_TIME_WINDOW

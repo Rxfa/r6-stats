@@ -3,21 +3,21 @@ import argparse
 import json
 import os
 import sys
-from game import Match
-from utils import timer
+from .round import *
 
+def main(file, output_path="."):
+    # with open(filename, encoding="utf-8") as f:
+    #    data = json.load(f)
+    #    game = Game(data)
 
-@timer
-def main(filename, output_path="."):
-    with open(filename, encoding="utf-8") as f:
-        data = json.load(f)
-        game = Match(data)
+    # with open(f"{output_path}/file.json", "w", encoding="utf-8") as f:
+    #    file = json.dumps(game, default=lambda x: x.__dict__)
+    #    f.write(file)
 
-    with open(f"{output_path}/file.json", "w", encoding="utf-8") as f:
-        file = json.dumps(game, default=lambda x: x.__dict__)
-        f.write(file)
-
-    return file
+    # return file
+    json_file = json.loads(file)
+    print(json_file)
+    return Round(json_file)
 
 
 if __name__ == "__main__":
