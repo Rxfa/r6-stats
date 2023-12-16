@@ -1,22 +1,21 @@
 from django.db import transaction
-from ..models import Player, RoundReplay, Round, Team
+from ..models import Player, RoundReplay, Round, Team, Replay
 import subprocess
 
 from .ReplayToJsonService import ReplayToJsonService
 
 
 class RoundReplayService:
-    def __init__(self, user, files):
+    def __init__(self, user):
         self.user = user
-        self.files = files
 
     @transaction.atomic
-    def create(self):
+    def create(self, files):
         try:
             with transaction.atomic():
-
-                for file in self.files:
-                    round_replay_instance = RoundReplay.objects.create(uploaded_by=self.user, file=file)
+                replay_instance = Replay.objects.create(uploaded_by=self.user)
+                for file in files:
+                    round_replay_instance = RoundReplay.objects.create(replay=replay_instance, file=file)
                     round_data = r6_dissect(round_replay_instance.file.path)
                     round_instance = create_round(round_replay_instance, round_data)
                     for team in round_data.teams:
@@ -41,6 +40,7 @@ def create_round(round_replay_instance, round_data) -> Round:
         replay=round_replay_instance,
         dateTime=round_data.dateTime,
         match_id=round_data.match_id,
+        map=round_data.map,
         number=round_data.number,
         own_score=round_data.score.own,
         opp_score=round_data.score.opp,

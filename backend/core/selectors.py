@@ -1,8 +1,10 @@
+import uuid
+
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
 import django_filters
 
-from .models import Round, RoundReplay, Team, Player
+from .models import Round, RoundReplay, Team, Player, Round, Replay
 
 
 def rounds_list(fetched_by: User):
@@ -14,11 +16,27 @@ def rounds_retrieve(fetched_by: User, match_id):
 
 
 def replay_list_queryset(fetched_by: User) -> QuerySet:
-    return RoundReplay.objects.filter(uploaded_by=fetched_by)
+    return Replay.objects.filter(uploaded_by=fetched_by)
+
+
+def replay_retrieve(fetched_by: User, uuid: uuid.UUID) -> QuerySet:
+    return Replay.objects.filter(uploaded_by=fetched_by, uuid=uuid)
+
+
+def replay_exists(fetched_by: User, uuid: uuid.UUID) -> bool:
+    return replay_retrieve(fetched_by, uuid).exists()
+
+
+def replay_destroy_queryset(fetched_by: User, id: uuid.UUID) -> QuerySet:
+    return Replay.objects.filter(uploaded_by=fetched_by, uuid=id)
+
+
+def round_replay_list_queryset(fetched_by: User) -> QuerySet:
+    return RoundReplay.objects.filter(replay__id=fetched_by)
 
 
 def round_list_queryset(fetched_by: User) -> QuerySet:
-    return Round.objects.filter(replay__in=replay_list_queryset(fetched_by))
+    return Round.objects.filter(replay__replay__uploaded_by=fetched_by)
 
 
 def round_list_by_map_queryset(fetched_by: User, maps: list[str]) -> QuerySet:
@@ -39,9 +57,9 @@ def own_team_players_list_queryset(fetched_by: User) -> QuerySet:
 
 
 def own_team_players_get_queryset(fetched_by: User, match_id) -> QuerySet:
-    team = (
-            Team.objects.filter(round__in=Round.objects.filter(match_id=match_id)) &
-            Team.objects.filter(is_own=True)
+    team = Team.objects.filter(
+        is_own=True,
+        round__in=Round.objects.filter(match_id=match_id)
     )
     return Player.objects.filter(team=team)
 

@@ -12,11 +12,12 @@ from rest_framework.viewsets import ModelViewSet
 
 from .models import RoundReplay, Round, Team, Player
 from .serializers import (
-    RoundListUploadSerializer, RoundSerializer, TeamSerializer, PlayerSerializer,
-    RoundFilterSerializer, TeamFilterSerializer
+    RoundListUploadSerializer, RoundSerializer, ReplaySerializer
 )
+from .services.ReplayService import ReplayService
 from .services.RoundReplayService import RoundReplayService
 from .selectors import *
+
 
 class GameViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Round.objects.all()
@@ -25,8 +26,8 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        queryset = round_list_queryset(request.user)
-        match_ids = Round.objects.all().values_list("match_id", flat=True).distinct()
+        queryset = round_list_queryset(self.request.user)
+        match_ids = queryset.values_list("match_id", flat=True).distinct()
         serialized_data = {
             i: self.serializer_class(queryset, many=True).data for i in match_ids
         }
@@ -36,6 +37,7 @@ class GameViewSet(viewsets.ReadOnlyModelViewSet):
         rounds = rounds_retrieve(self.request.user, self.kwargs["match_id"])
         serialized_data = self.serializer_class(rounds, many=True).data
         return Response(serialized_data, status=status.HTTP_200_OK)
+
 
 class RoundViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
     queryset = Round.objects.all()
@@ -47,17 +49,29 @@ class RoundViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
         serialized_data = self.serializer_class(queryset, many=True).data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
-class FileUploadViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+
+class FileUploadViewSet(
+    viewsets.GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.DestroyModelMixin
+):
     queryset = RoundReplay.objects.all()
     serializer_class = RoundListUploadSerializer
     parser_classes = (MultiPartParser, FormParser)
     permission_classes = [IsAuthenticated]
+    lookup_field = "uuid"
+
+    def list(self, request, *args, **kwargs):
+        queryset = replay_list_queryset(self.request.user)
+        serialized_data = ReplaySerializer(queryset, many=True).data
+        return Response(serialized_data, status=status.HTTP_200_OK)
 
     def create(self, request, *args, **kwargs):
         serializer = RoundListUploadSerializer(data=request.data)
         if serializer.is_valid():
             try:
-                RoundReplayService(self.request.user, self.request.FILES.getlist("rounds")).create()
+                RoundReplayService(self.request.user).create(self.request.FILES.getlist("rounds"))
             except IntegrityError:
                 return Response(
                     {"error": "Round already exists"},
@@ -68,5 +82,16 @@ class FileUploadViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
                     {"error": "Failed to save files", "description": str(e)},
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response({"message": "Replays uploaded successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, *args, **kwargs):
+        uuid = kwargs.get("uuid")
+        user = self.request.user
+        if replay_exists(user, uuid):
+            try:
+                ReplayService(user).destroy(uuid)
+                return Response("Replay deleted successfully", status=status.HTTP_200_OK)
+            except:
+                return Response({"error": "Replay could not be deleted"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": "Replay not found"}, status=status.HTTP_404_NOT_FOUND)

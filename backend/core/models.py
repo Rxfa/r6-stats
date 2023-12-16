@@ -6,10 +6,14 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import FileExtensionValidator
 
+class Replay(models.Model):
+    uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class RoundReplay(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    replay = models.ForeignKey(Replay, on_delete=models.CASCADE, related_name='round_replays')
     file = models.FileField(
         upload_to="replays",
     )

@@ -23,7 +23,7 @@ class Round:
         self.match_id: str = data["matchID"]
         self.number: int = data["roundNumber"]
         self.recordingPlayerId: str = data["recordingPlayerID"]
-        self.map: str = data["map"]
+        self.map: str = data["map"]["name"]
         self.site: str = data["site"]
         self.teams: list = [Team(data, idx) for idx, _ in enumerate(data["teams"])]
         self.score: Score = Score(
