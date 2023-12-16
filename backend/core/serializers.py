@@ -3,6 +3,19 @@ from rest_framework import serializers
 from .models import Round, Team, Player, RoundReplay
 
 
+class RoundFilterSerializer(serializers.Serializer):
+    dateTime = serializers.DateTimeField(required=False)
+    number = serializers.IntegerField(required=False)
+    map = serializers.CharField(required=False)
+
+
+class TeamFilterSerializer(serializers.Serializer):
+    is_own = serializers.BooleanField(allow_null=True, required=False)
+    won = serializers.BooleanField(allow_null=True, required=False)
+    win_condition = serializers.CharField(required=False)
+    side = serializers.CharField(required=False)
+
+
 class RoundUploadSerializer(serializers.ModelSerializer):
     class Meta:
         model = RoundReplay
@@ -46,4 +59,3 @@ class RoundSerializer(serializers.ModelSerializer):
 
 class GameSerializer(serializers.Serializer):
     Rounds = RoundSerializer(many=True, read_only=True)
-

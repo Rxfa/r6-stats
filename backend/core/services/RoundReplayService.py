@@ -14,6 +14,7 @@ class RoundReplayService:
     def create(self):
         try:
             with transaction.atomic():
+
                 for file in self.files:
                     round_replay_instance = RoundReplay.objects.create(uploaded_by=self.user, file=file)
                     round_data = r6_dissect(round_replay_instance.file.path)
@@ -23,7 +24,7 @@ class RoundReplayService:
                         for player in team.players.values():
                             create_player(team_instance, player)
         except Exception as e:
-            return e
+            raise e
 
 
 def r6_dissect(file):
