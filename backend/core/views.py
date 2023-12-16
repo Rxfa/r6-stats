@@ -1,16 +1,9 @@
-from datetime import timezone
-
-from django.db import transaction, IntegrityError
-from django.db.models import Count
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets, filters
+from django.db import IntegrityError
+from rest_framework import status, viewsets
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import mixins
-from rest_framework.viewsets import ModelViewSet
-
-from .models import RoundReplay, Round, Team, Player
 from .serializers import (
     RoundListUploadSerializer, RoundSerializer, ReplaySerializer
 )
@@ -58,7 +51,7 @@ class FileUploadViewSet(
 ):
     queryset = RoundReplay.objects.all()
     serializer_class = RoundListUploadSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
     permission_classes = [IsAuthenticated]
     lookup_field = "uuid"
 
@@ -73,15 +66,9 @@ class FileUploadViewSet(
             try:
                 RoundReplayService(self.request.user).create(self.request.FILES.getlist("rounds"))
             except IntegrityError:
-                return Response(
-                    {"error": "Round already exists"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
+                return Response({"error": "Round already exists"},status=status.HTTP_400_BAD_REQUEST)
             except Exception as e:
-                return Response(
-                    {"error": "Failed to save files", "description": str(e)},
-                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
-                )
+                return Response({"error": "Failed to save files", "description": str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)
             return Response({"message": "Replays uploaded successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

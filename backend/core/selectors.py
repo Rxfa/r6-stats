@@ -2,9 +2,8 @@ import uuid
 
 from django.contrib.auth.models import User
 from django.db.models import QuerySet
-import django_filters
 
-from .models import Round, RoundReplay, Team, Player, Round, Replay
+from .models import RoundReplay, Team, Player, Round, Replay
 
 
 def rounds_list(fetched_by: User):

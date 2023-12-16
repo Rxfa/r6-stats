@@ -6,10 +6,12 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import FileExtensionValidator
 
+
 class Replay(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     timestamp = models.DateTimeField(auto_now_add=True)
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
 
 class RoundReplay(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -52,6 +54,12 @@ class Team(models.Model):
         constraints = [
             models.UniqueConstraint(fields=["round", "is_own"], name="team_id")
         ]
+
+    def clean(self):
+        if self.won and self.win_condition is None:
+            raise ValidationError(_("If won, there has to be a win condition"))
+        if not self.won and self.win_condition is not None:
+            raise ValidationError(_("If not won, there can be no win condition"))
 
 
 class Player(models.Model):
@@ -104,11 +112,15 @@ class Player(models.Model):
                 (self.planted and self.time_of_plant is None) or
                 (self.disabled and self.time_of_plant is None)
         ):
-            raise ValidationError() #TODO: Write error message
+            raise ValidationError(_("Time of objective play cannot be null if objective play was made"))
         if (
                 (not self.planted and self.time_of_plant is not None) or
                 (not self.disabled and self.time_of_plant is not None)
         ):
-            raise ValidationError()  # TODO: Write error message
+            raise ValidationError(_("Time of objective play has to be null if no objective play was made"))
         if self.time_of_plant > 180 or self.time_of_disable > 180:
             raise ValidationError(_("Invalid time for objective play"))
+        if self.refragged and self.kills == 0:
+            raise ValidationError(_("Player cannot refrag and have no kills"))
+        if self.traded and not self.died:
+            raise ValidationError(_("Player cannot be traded and not die"))

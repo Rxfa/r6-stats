@@ -1,7 +1,6 @@
 import uuid
 
-from django.db import transaction, IntegrityError
-from django.db.models import QuerySet
+from django.db import transaction
 from ..selectors import replay_destroy_queryset
 from django.contrib.auth.models import User
 
