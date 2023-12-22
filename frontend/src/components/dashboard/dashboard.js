@@ -9,6 +9,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import TableComponent from "./table";
+import TableTabsComponent from "./tableTabs";
 import { isLogged } from "../../utils/utils";
 import { useNavigate } from "react-router";
 
@@ -54,14 +55,12 @@ function Dashboard(){
    return(
     <Flex 
       direction={"column"}
-      flexGrow={1}
-      align={"center"}
       justify={'center'}
       bg={useColorModeValue('gray.200', 'gray.900')}
       color={useColorModeValue('gray.700', 'gray.200')}
     >
       <HStack spacing={stackSpacing}>
-        <TableComponent/>
+        <TableTabsComponent/>
         <Stack spacing={stackSpacing}>
           <SortBox />
           <FilterBox />

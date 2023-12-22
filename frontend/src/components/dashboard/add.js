@@ -25,6 +25,7 @@ import {
 } from '@chakra-ui/react';
 
 import { AddIcon, ViewIcon } from '@chakra-ui/icons';
+import { FileUploadFormComponent } from "./fileUploadForm";
 
 export function AddModalComponent(){
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -39,7 +40,7 @@ export function AddModalComponent(){
                     <ModalHeader>Stats</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        Add
+                        <FileUploadFormComponent />
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme='red' mr={2} onClick={onClose}>

@@ -62,6 +62,7 @@ function SignIn(props) {
                 getCurrentUser("dashboard");
             })
             .catch(error => {
+                console.log(error)
                 unsetCurrentUser();
                 if(error.response.data){
                     for(const [_, value] of Object.entries(error.response.data)){

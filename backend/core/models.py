@@ -22,7 +22,7 @@ class RoundReplay(models.Model):
 
 
 class Round(models.Model):
-    replay = models.OneToOneField(RoundReplay, on_delete=models.PROTECT, primary_key=True)
+    replay = models.OneToOneField(RoundReplay, on_delete=models.CASCADE, primary_key=True)
     dateTime = models.DateTimeField()
     match_id = models.CharField(max_length=50)
     number = models.PositiveIntegerField()
@@ -35,6 +35,10 @@ class Round(models.Model):
     opp_atk_ban = models.CharField(max_length=50, blank=True, null=True)
     own_def_ban = models.CharField(max_length=50, blank=True, null=True)
     opp_def_ban = models.CharField(max_length=50, blank=True, null=True)
+
+    @property
+    def score(self):
+        return f"{self.own_score} - {self.opp_score}"
 
     class Meta:
         constraints = [
@@ -87,9 +91,9 @@ class Player(models.Model):
     def kost(self):
         if (
                 self.kills > 0 or
+                (not self.died) or
                 self.planted or
                 self.disabled or
-                not self.died or
                 self.traded
         ):
             return 1

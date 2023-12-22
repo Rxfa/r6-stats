@@ -32,8 +32,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
@@ -49,6 +48,8 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 15,
 }
 
+DJOSER = {"USER_ID_FIELD": "username"}
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -60,6 +61,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_filters",
     "corsheaders",
+    "djoser",
     "rest_framework",
     "core.apps.CoreConfig",
     "rest_framework.authtoken",
@@ -80,9 +82,12 @@ ROOT_URLCONF = "statsApp.urls"
 
 # CORS_ORIGIN_ALLOW_ALL = True
 
+
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://localhost:8000"
 ]
 
 TEMPLATES = [

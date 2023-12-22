@@ -15,48 +15,35 @@ import {
   Stack,
   useColorModeValue,
 } from '@chakra-ui/react';
+import { axios_instance } from "../../utils/utils";
 
 axios.defaults.baseURL = 'http://localhost:8000';
 
 function TableComponent() {
 
-  const [games, setGames] = useState([]);
-  const [checkedGames, setCheckedGames] = useState([]);
-  const [checkedGamesIds, setCheckedGamesIds] = useState([]);
+  const [rounds, setRounds] = useState([]);
+  const [checkedRounds, setCheckedRounds] = useState([]);
   const [date, setDate] = useState("");
   const [playedMap, setPlayedMap] = useState("");
-  const [ownScore, setOwnScore] = useState("");
-  const [oppScore, setOppScore] = useState("");
+  const [playedSite, setPlayedSite] = useState("");
+  const [won, setWon] = useState(false);
   const [ownATKBan, setOwnATKBan] = useState("");
   const [ownDEFBan, setOwnDEFBan] = useState("");
   const [oppATKBan, setOppATKBan] = useState("");
   const [oppDEFBan, setOppDEFBan] = useState("");
 
   useEffect(() => {
-    axios
-      .get("games")
+    axios_instance
+      .get("/rounds/")
       .then(
         res => {
-          setGames(res.data.results);
-          console.log(res.data.results);
-        })
+          console.log(res.data);
+          setRounds(res.data);
+          setCheckedRounds(res.data);
+        }
+      )
       .catch(error => console.error(error));
   }, []);
-
-  useEffect(() => {
-    axios
-    .get(
-      `games/?date=${date}&id=${checkedGamesIds}&map=${playedMap}&own_score=${ownScore}&opp_score=${oppScore}&own_atk_ban=${ownATKBan}&own_def_ban=${ownDEFBan}&opp_atk_ban=${oppATKBan}&opp_def_ban=${oppDEFBan}`
-    )
-    .then(
-      res => {
-        setGames(res.data.results);
-        setCheckedGames(res.data.results);
-        console.log(res.data.results);
-      }
-    )
-    .catch(error => console.error(error));
-  }, [checkedGamesIds, date, oppATKBan, oppDEFBan, oppScore, ownATKBan, ownDEFBan, ownScore, playedMap]);
 
   /**
    * TODO: Get rid of the useEffect hook and make it do a request to the API only when
@@ -68,41 +55,42 @@ function TableComponent() {
      bg={useColorModeValue('white', 'gray.800')}
      rounded={"2xl"}
      boxShadow={"2xl"}
+     minHeight={"3xl"}
+         
     >
       <Stack direction={"row-reverse"} spacing={"auto"} py={"4"} mx={"6"}>
         {
-          checkedGamesIds.length >= 1 ? (
+          checkedRounds.length >= 1 ? (
             <>
               <DeleteAlertComponent />
               <ViewModalComponent />
             </>
-          ) : checkedGamesIds.length === 0 ? (
+          ) : checkedRounds.length === 0 ? (
             <AddModalComponent />
           ) : null
         }
       </Stack>
-      <Table size="lg">
+      <Table>
         <Thead>
           <Th>
             <Checkbox
-              size={"lg"}
               colorScheme="messenger"
-              isChecked={checkedGamesIds.length === games.map(row => row.id).length}
+              isChecked={checkedRounds.length === rounds.length}
               onChange={() => {
-                const gameIds = games.map(row => row.id)
-                if (checkedGamesIds.length === gameIds.length){
-                  setCheckedGamesIds([])
+                const gameIds = rounds.map(row => row.id)
+                if (checkedRounds.length === rounds.length){
+                  setCheckedRounds([])
                 } else {
-                  setCheckedGamesIds(gameIds)
+                  setCheckedRounds(gameIds)
                 }
               }}
-            >
-              ID
-            </Checkbox>
+            />
           </Th>
           <Th>Date</Th>
           <Th>Map</Th>
-          <Th>Score</Th>
+          <Th>Site</Th>
+          <Th>Won</Th>
+          <Th>Side</Th>
           <Th>Own - ATK ban</Th>
           <Th>Own - DEF ban</Th>
           <Th>Opp - ATK ban</Th>
@@ -110,31 +98,29 @@ function TableComponent() {
         </Thead>
         <Tbody>
           {
-            games.map(row => (
+            rounds.map(row => (
               <Tr>
                 <Td>
                   <Checkbox
                     colorScheme="messenger"
-                    size={"lg"}
                     isChecked={
-                      checkedGamesIds.includes(row.id)
+                      checkedRounds.includes(row.id)
                     }
                     onChange={() => {
-                      console.log(checkedGamesIds)
-                      const idx = checkedGamesIds.indexOf(row.id)
+                      const idx = checkedRounds.indexOf(row.id)
                       if(idx !== -1){
-                        setCheckedGamesIds([...checkedGamesIds.slice(0, idx), ...checkedGamesIds.slice(idx+1)])
+                        setCheckedRounds([...checkedRounds.slice(0, idx), ...checkedRounds.slice(idx+1)])
                       } else {
-                        setCheckedGamesIds([...checkedGamesIds, row.id])
+                        setCheckedRounds([...checkedRounds, row.id])
                       }
                     }}
-                  >
-                    {row.id}
-                  </Checkbox>
+                  />
                 </Td>
-                <Td>{row.date}</Td>
+                <Td>{row.dateTime}</Td>
                 <Td>{row.map}</Td>
-                <Td>{row.score}</Td>
+                <Td>{row.site}</Td>
+                <Td>{`${row.teams[0].won}`}</Td>
+                <Td>{row.teams[0].side}</Td>
                 <Td>{row.own_atk_ban}</Td>
                 <Td>{row.own_def_ban}</Td>
                 <Td>{row.opp_atk_ban}</Td>

@@ -1,7 +1,5 @@
 import axios from "axios";
 
-axios.defaults.baseURL = 'http://localhost:8000';
-
 export const setToken = token => {
   setAxiosAuthToken(token);
   localStorage.setItem("token", token);
@@ -15,10 +13,8 @@ export const unsetCurrentUser = () => {
 
 export const setAxiosAuthToken = token => {
   if (typeof token !== "undefined" && token) {
-    // Apply for every request
-    axios.defaults.headers.common["Authorization"] = "Token " + token;
+    axios.defaults.headers.common["Authorization"] = `Token ${token}`;
   } else {
-    // Delete auth header
     delete axios.defaults.headers.common["Authorization"];
   }
 };
@@ -46,3 +42,9 @@ export const userToken = localStorage.getItem("token");
 export const emailIsValid = email => (/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(email))
 
 export const defaultTime = 8000;
+
+export const axios_instance = axios.create({
+  baseURL: 'http://localhost:8000',
+  timeout: 1000,
+  headers: {"Authorization": `Token ${userToken}`}
+})
