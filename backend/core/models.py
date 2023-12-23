@@ -86,22 +86,8 @@ class Player(models.Model):
     time_of_plant = models.PositiveIntegerField(null=True, blank=True)
     disabled = models.BooleanField()
     time_of_disable = models.PositiveIntegerField(null=True, blank=True)
-
-    @property
-    def kost(self):
-        if (
-                self.kills > 0 or
-                (not self.died) or
-                self.planted or
-                self.disabled or
-                self.traded
-        ):
-            return 1
-        return 0
-
-    @property
-    def multikill(self):
-        return self.kills > 1
+    kost = models.BooleanField()
+    multikill = models.BooleanField()
 
     def clean(self):
         if self.assists > self.kills:
@@ -112,6 +98,10 @@ class Player(models.Model):
             raise ValidationError(_("Player cannot plant and defuse in the same round"))
         if (self.opening_kill and not self.entry_kill) or (self.opening_death and not self.entry_death):
             raise ValidationError(_("Player has opening but no entry"))
+        if self.entry_kill and self.kills == 0:
+            raise ValidationError(_("Player has entry kill but no kills"))
+        if self.entry_death and not self.died:
+            raise ValidationError(_("Player has entry death and no deaths"))
         if (
                 (self.planted and self.time_of_plant is None) or
                 (self.disabled and self.time_of_plant is None)

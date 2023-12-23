@@ -1,12 +1,12 @@
 import uuid
 
 from django.contrib.auth.models import User
-from django.db.models import QuerySet, Sum, Count, Q, FloatField, F
+from django.db.models import QuerySet, Sum, Count, Q, When, Case
 
 from .models import Team, Player, Round, Replay
 
 
-def get_games(user):
+def list_games(user):
     return [
         GameSelector(match_id) for match_id in
         set(
@@ -17,39 +17,8 @@ def get_games(user):
     ]
 
 
-class PlayerRoundStatsSelector:
-    def __init__(self, player):
-        self.name = player.name
-        self.spawn = player.spawn
-        self.operator = player.operator
-        self.kills = player.kills
-        self.assists = player.assists
-        self.headshots = player.headshots
-        self.died = player.died
-        self.opening_kill = player.opening_kill
-        self.opening_death = player.opening_death
-        self.entry_kill = player.entry_kill
-        self.entry_death = player.entry_death
-        self.refragged = player.refragged
-        self.traded = player.traded
-        self.planted = player.planted
-        self.time_of_plant = player.time_of_plant
-        self.disabled = player.disabled
-        self.time_of_disable = player.time_of_disable
-        self.kost = player.kost
-        self.multikill = player.multikill
-
-
-class RoundSelector:
-    def __init__(self, round):
-        team = Team.objects.filter(round=round, is_own=True).first()
-        self.number = round.number
-        self.score = ScoreSelector(round)
-        self.won = team.won
-        self.win_condition = team.win_condition
-        self.timestamp = round.timestamp
-        self.site = round.site
-        self.players = [PlayerRoundStatsSelector(player) for player in Player.objects.filter(team=team)]
+def retrieve_game(user, match_id):
+    return GameSelector(match_id)
 
 
 class BansSelector:
@@ -65,32 +34,23 @@ class ScoreSelector:
         self.opp: int = queryset.opp_score
 
 
-class PlayerStatsSelector:
-    def __init__(self, player, data: tuple):
-        (stats, rounds, kost, multikills) = data
-        self.name: str = player.name
-        self.rounds = rounds
-        self.kills: int = stats["kills"]
-        self.deaths: int = stats["deaths"]
-        self.kd_diff: int = self.kills - self.deaths
-        self.kd_ratio: float = self.kills / self.deaths
-        self.kpr: float = self.kills / self.rounds
-        self.assists: int = stats["assists"]
-        self.headshots: int = stats["headshots"]
-        self.hs_ratio: float = self.headshots / self.kills
-        self.kost: float = kost
-        self.opening_kills: int = stats["opening_kills"]
-        self.opening_deaths: int = stats["opening_deaths"]
-        self.opening_diff: int = self.opening_kills - self.opening_deaths
-        self.entry_kills: int = stats["entry_kills"]
-        self.entry_deaths: int = stats["entry_deaths"]
-        self.entry_diff: int = self.entry_kills - self.entry_deaths
-        self.refrags: int = stats["refrags"]
-        self.trades: int = stats["trades"]
-        self.plants: int = stats["plants"]
-        self.disables: int = stats["disables"]
-        self.multikills: int = multikills
-        self.srv: float = (self.rounds - self.deaths) / self.rounds
+class GameSelector:
+    def __init__(self, game_id: uuid):
+        data: QuerySet = Round.objects.filter(match_id=game_id).order_by("number")
+        last_round: QuerySet = data.last()
+        self.match_id: str = last_round.match_id
+        self.round: int = len(data)
+        self.score: ScoreSelector = ScoreSelector(last_round)
+        self.won: bool = self.score.own > self.score.opp
+        self.draw: bool = self.score.own == self.score.opp
+        self.map: str = last_round.map
+        self.date: str = last_round.timestamp
+        self.bans: list[BansSelector] = [
+            BansSelector(is_own=True, ATK=last_round.own_atk_ban, DEF=last_round.own_def_ban),
+            BansSelector(is_own=False, ATK=last_round.opp_atk_ban, DEF=last_round.opp_def_ban)
+        ]
+        self.rounds: list[RoundSelector] = [RoundSelector(round) for round in data]
+        self.stats: StatsSelector = StatsSelector(data)
 
 
 class TeamStatsSelector:
@@ -105,33 +65,31 @@ class SiteStatsSelector:
         self.wins: int = wins
 
 
-def player_stats_aggregate(player: QuerySet) -> (dict, int, int, int):
-    # len(team) also represents the number of rounds since every team object has a round as its FK
-    rounds: int = len(player)
-    kost: float = 0
-    multikills: int = 0
-    for i in player:
-        kost += i.kost
-        multikills += i.multikill
-    return (
-        (
-            player
-            .aggregate(
-                kills=Sum("kills"),
-                assists=Sum("assists"),
-                deaths=Count("died", only=Q(died=True)),
-                headshots=Sum("headshots"),
-                opening_kills=Count("opening_kill", only=Q(opening_kill=True)),
-                opening_deaths=Count("opening_death", only=Q(opening_death=True)),
-                entry_kills=Count("entry_kill", only=Q(entry_kill=True)),
-                entry_deaths=Count("entry_death", only=Q(entry_death=True)),
-                refrags=Count("refragged", only=Q(refragged=True)),
-                trades=Count("traded", only=Q(traded=True)),
-                plants=Count("planted", only=Q(planted=True)),
-                disables=Count("disabled", only=Q(disabled=True)),
-            )
-        ), rounds, kost, multikills
-    )
+class PlayerStatsSelector:
+    def __init__(self, player: Player, stats: dict):
+        self.name: str = player.name
+        self.rounds = stats["rounds"]
+        self.kills: int = stats["kills"]
+        self.deaths: int = stats["deaths"]
+        self.kd_diff: int = self.kills - self.deaths
+        self.kd_ratio: str = "{:.2%}".format(self.kills / self.deaths)
+        self.kpr: str = "{:.2%}".format(self.kills / self.rounds)
+        self.assists: int = stats["assists"]
+        self.headshots: int = stats["headshots"]
+        self.hs_percentage: str = "{:.2%}".format(self.headshots / self.kills)
+        self.kost: str = "{:.2%}".format(stats["kost"] / self.rounds)
+        self.opening_kills: int = stats["opening_kills"]
+        self.opening_deaths: int = stats["opening_deaths"]
+        self.opening_diff: int = self.opening_kills - self.opening_deaths
+        self.entry_kills: int = stats["entry_kills"]
+        self.entry_deaths: int = stats["entry_deaths"]
+        self.entry_diff: int = self.entry_kills - self.entry_deaths
+        self.refrags: int = stats["refrags"]
+        self.trades: int = stats["trades"]
+        self.plants: int = stats["plants"]
+        self.disables: int = stats["disables"]
+        self.multikills: int = stats["multikills"]
+        self.survival_rate: str = "{:.2%}".format((self.rounds - self.deaths) / self.rounds)
 
 
 class StatsSelector:
@@ -166,46 +124,71 @@ class StatsSelector:
 
     def get_player_stats(self, side: str | None = None) -> list[PlayerStatsSelector]:
         query: QuerySet = (
-            Player.objects
-            .filter(team__round__in=self.roundQuerySet, team__is_own=True)
-            .annotate(
-                # kost=(F("died") or F("planted") or F("disabled") or F("kills") or F("traded")),
-                # multikills=F("kills"),
-                # has to be annotated since it is a computed value
-            )
+            Player.objects.filter(team__round__in=self.roundQuerySet, team__is_own=True)
             if not side else
-            Player.objects
-            .filter(team__round__in=self.roundQuerySet, team__is_own=True, team__side__iexact=side)
-            .annotate(
-                # kost=(F("died") or F("planted") or F("disabled") or F("kills") or F("traded")),
-                # multikills=F("kills"),
-                # has to be annotated since it is a computed value
-            )
+            Player.objects.filter(team__round__in=self.roundQuerySet, team__is_own=True, team__side__iexact=side)
         )
         return [
             PlayerStatsSelector(
                 player=Player.objects.filter(uid=player_uid).first(),
-                data=player_stats_aggregate(Player.objects.filter(uid=player_uid, team__round__in=self.roundQuerySet))
+                stats=player_stats_aggregate(Player.objects.filter(uid=player_uid, team__round__in=self.roundQuerySet))
             ) for player_uid in set(query.values_list("uid", flat=True))
         ]
 
 
-class GameSelector:
-    def __init__(self, game_id: uuid):
-        data: QuerySet = Round.objects.filter(match_id=game_id).order_by("number")
-        last_round: QuerySet = data.last()
-        self.round: int = len(data)
-        self.score: ScoreSelector = ScoreSelector(last_round)
-        self.won: bool = self.score.own > self.score.opp
-        self.draw: bool = self.score.own == self.score.opp
-        self.map: str = last_round.map
-        self.date: str = last_round.timestamp
-        self.bans: list[BansSelector] = [
-            BansSelector(is_own=True, ATK=last_round.own_atk_ban, DEF=last_round.own_def_ban),
-            BansSelector(is_own=False, ATK=last_round.opp_atk_ban, DEF=last_round.opp_def_ban)
-        ]
-        self.rounds: list[RoundSelector] = [RoundSelector(round) for round in data]
-        self.stats: StatsSelector = StatsSelector(data)
+class RoundSelector:
+    def __init__(self, round):
+        team = Team.objects.filter(round=round, is_own=True).first()
+        self.number = round.number
+        self.score = ScoreSelector(round)
+        self.won = team.won
+        self.win_condition = team.win_condition
+        self.timestamp = round.timestamp
+        self.site = round.site
+        self.players = [PlayerRoundStatsSelector(player) for player in Player.objects.filter(team=team)]
+
+
+class PlayerRoundStatsSelector:
+    def __init__(self, player):
+        self.name = player.name
+        self.spawn = player.spawn
+        self.operator = player.operator
+        self.kills = player.kills
+        self.assists = player.assists
+        self.headshots = player.headshots
+        self.died = player.died
+        self.opening_kill = player.opening_kill
+        self.opening_death = player.opening_death
+        self.entry_kill = player.entry_kill
+        self.entry_death = player.entry_death
+        self.refragged = player.refragged
+        self.traded = player.traded
+        self.planted = player.planted
+        self.time_of_plant = player.time_of_plant
+        self.disabled = player.disabled
+        self.time_of_disable = player.time_of_disable
+        self.kost = player.kost
+        self.multikill = player.multikill
+
+
+def player_stats_aggregate(player: QuerySet) -> dict:
+    return player.aggregate(
+        rounds=Count("died"),  # counts both True and False, hence returning the number of rounds
+        kills=Sum("kills"),
+        assists=Sum("assists"),
+        deaths=Count(Case(When(died=True, then=1))),
+        headshots=Sum("headshots"),
+        opening_kills=Count(Case(When(opening_kill=True, then=1))),
+        opening_deaths=Count(Case(When(opening_death=True, then=1))),
+        entry_kills=Count(Case(When(entry_kill=True, then=1))),
+        entry_deaths=Count(Case(When(opening_death=True, then=1))),
+        refrags=Count(Case(When(refragged=True, then=1))),
+        trades=Count(Case(When(traded=True, then=1))),
+        plants=Count(Case(When(planted=True, then=1))),
+        disables=Count(Case(When(disabled=True, then=1))),
+        kost=Count(Case(When(kost=True, then=1))),
+        multikills=Count(Case(When(multikill=True, then=1)))
+    )
 
 
 def rounds_list(fetched_by: User):
@@ -220,12 +203,8 @@ def replay_list_queryset(fetched_by: User) -> QuerySet:
     return Replay.objects.filter(uploaded_by=fetched_by)
 
 
-def replay_retrieve(fetched_by: User, uuid: uuid.UUID) -> QuerySet:
-    return Replay.objects.filter(uploaded_by=fetched_by, uuid=uuid)
-
-
 def replay_exists(fetched_by: User, uuid: uuid.UUID) -> bool:
-    return replay_retrieve(fetched_by, uuid).exists()
+    return Replay.objects.filter(uploaded_by=fetched_by, uuid=uuid).exists()
 
 
 def replay_destroy_queryset(fetched_by: User, id: uuid.UUID) -> QuerySet:

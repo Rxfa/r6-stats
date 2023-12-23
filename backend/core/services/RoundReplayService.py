@@ -79,5 +79,7 @@ def create_player(team_instance, player_data) -> Player:
         planted=player_data.planted,
         time_of_plant=player_data.time_of_plant,
         disabled=player_data.disabled,
-        time_of_disable=player_data.time_of_disable
+        time_of_disable=player_data.time_of_disable,
+        kost=player_data.kost,
+        multikill=player_data.multikill
     )

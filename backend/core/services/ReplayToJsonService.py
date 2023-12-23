@@ -33,10 +33,6 @@ class Round:
         self.own_bans: str | None = None  # Not possible to get as of August 18th 2023
         self.opp_bans: str | None = None  # Not possible to get as of August 18th 2023
 
-
-REFRAG_TIME_WINDOW: int = 10
-
-
 class Team:
     def __init__(self, round_data, num):
         self.own_team: bool = (num == 0)
@@ -133,6 +129,7 @@ class Team:
                 player.time_of_disable = event["timeInSeconds"]
 
     def _isTrade(self, event1, event2) -> bool:
+        REFRAG_TIME_WINDOW: int = 10
         return event1 - event2 <= REFRAG_TIME_WINDOW
 
 
@@ -156,3 +153,7 @@ class Player:
         self.time_of_plant: int | None = None
         self.disabled: bool = False
         self.time_of_disable: int | None = None
+        self.kost: bool = (
+                self.kills > 0 or (not self.died) or self.planted or self.disabled or self.traded
+        )
+        self.multikill: bool = self.kills > 0

@@ -4,29 +4,43 @@ from rest_framework import mixins
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .serializers import (RoundListUploadSerializer, RoundSerializer, ReplaySerializer, LoginSerializer,
-                          GameSerializer, GamesSerializer)
-from .services.ReplayService import ReplayService
+from .serializers import (RoundListUploadSerializer, RoundSerializer, ReplaySerializer, GameSerializer)
+from .services.ReplayService import ReplayService, GameService
 from .services.RoundReplayService import RoundReplayService
 from .models import Round, RoundReplay
-from .selectors import get_games, rounds_retrieve, round_list_queryset, replay_list_queryset, replay_exists
+from .selectors import (
+    list_games,
+    retrieve_game,
+    rounds_retrieve,
+    round_list_queryset,
+    replay_list_queryset,
+    replay_exists
+)
 
 
 class GameViewSet(viewsets.ViewSet):
-    queryset = Round.objects.all()
-    lookup_field = 'match_id'
     permission_classes = [IsAuthenticated]
+    lookup_field = 'match_id'
 
     def list(self, request, *args, **kwargs):
-        queryset = get_games(self.request.user)
+        queryset = list_games(self.request.user)
         serializer = GameSerializer(queryset, many=True)
         serialized_data = serializer.data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
-        rounds = rounds_retrieve(self.request.user, self.kwargs["match_id"])
-        serialized_data = self.serializer_class(rounds, many=True).data
+        queryset = retrieve_game(self.request.user, self.kwargs['match_id'])
+        serializer = GameSerializer(queryset, many=False)
+        serialized_data = serializer.data
         return Response(serialized_data, status=status.HTTP_200_OK)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            GameService(self.request.user, self.kwargs["match_id"]).destroy()
+            return Response("Game deleted successfully", status=status.HTTP_200_OK)
+        except:
+            return Response({"error": "Replay could not be deleted"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 
 class RoundViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):

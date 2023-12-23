@@ -60,6 +60,32 @@ class PlayerSerializer(serializers.Serializer):
     multikill = serializers.BooleanField()
 
 
+class PlayerStatsSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=50)
+    rounds = serializers.IntegerField(min_value=0)
+    kills = serializers.IntegerField(min_value=0)
+    deaths = serializers.IntegerField(min_value=0, max_value=rounds)
+    kd_diff = serializers.IntegerField()
+    kd_ratio = serializers.CharField(max_length=50)
+    kpr = serializers.CharField(max_length=50)
+    assists = serializers.IntegerField(min_value=0, max_value=kills)
+    headshots = serializers.IntegerField(min_value=0, max_value=kills)
+    hs_percentage = serializers.CharField(max_length=50)
+    kost = serializers.CharField(max_length=50)
+    opening_kills = serializers.IntegerField(min_value=0, max_value=rounds)
+    opening_deaths = serializers.IntegerField(min_value=0, max_value=rounds)
+    opening_diff = serializers.IntegerField()
+    entry_kills = serializers.IntegerField(min_value=0, max_value=rounds)
+    entry_deaths = serializers.IntegerField(min_value=0, max_value=rounds)
+    entry_diff = serializers.IntegerField()
+    refrags = serializers.IntegerField(min_value=0, max_value=kills)
+    trades = serializers.IntegerField(min_value=0, max_value=deaths)
+    plants = serializers.IntegerField(min_value=0)
+    disables = serializers.IntegerField(min_value=0)
+    multikills = serializers.IntegerField(min_value=0, max_value=rounds)
+    survival_rate = serializers.CharField(max_length=50)
+
+
 class RoundSerializer(serializers.Serializer):
     number = serializers.IntegerField(min_value=0)
     score = ScoreSerializer(read_only=True)
@@ -75,20 +101,24 @@ class BansSerializer(serializers.Serializer):
     ATK = serializers.CharField(max_length=50)
     DEF = serializers.CharField(max_length=50)
 
+
 class SiteSerializer(serializers.Serializer):
     site = serializers.CharField(max_length=50, read_only=True)
     plays = serializers.IntegerField(read_only=True)
     wins = serializers.IntegerField(read_only=True, min_value=plays)
+
 
 class TeamStatsSerializer(serializers.Serializer):
     sites = SiteSerializer(many=True, read_only=True)
 
 
 class StatsSerializer(serializers.Serializer):
-    team = serializers.DictField(read_only=True, child=TeamStatsSerializer())
+    team = serializers.DictField(child=TeamStatsSerializer())
+    individual = serializers.DictField(child=PlayerStatsSerializer(many=True))
 
 
 class GameSerializer(serializers.Serializer):
+    match_id = serializers.CharField(max_length=50)
     won = serializers.BooleanField()
     map = serializers.CharField(max_length=50)
     date = serializers.DateTimeField()
@@ -96,7 +126,3 @@ class GameSerializer(serializers.Serializer):
     bans = BansSerializer(many=True, read_only=True)
     stats = StatsSerializer()
     rounds = RoundSerializer(many=True, read_only=True)
-
-
-class GamesSerializer(serializers.Serializer):
-    games = GameSerializer(many=True, read_only=True)
