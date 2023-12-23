@@ -72,11 +72,11 @@ class PlayerStatsSelector:
         self.kills: int = stats["kills"]
         self.deaths: int = stats["deaths"]
         self.kd_diff: int = self.kills - self.deaths
-        self.kd_ratio: str = "{:.2%}".format(self.kills / self.deaths)
-        self.kpr: str = "{:.2%}".format(self.kills / self.rounds)
+        self.kd_ratio: str = "{:.2f}".format(self.kills / self.deaths) if self.deaths > 0 else "0.00"
+        self.kpr: str = "{:.2f}".format(self.kills / self.rounds)
         self.assists: int = stats["assists"]
         self.headshots: int = stats["headshots"]
-        self.hs_percentage: str = "{:.2%}".format(self.headshots / self.kills)
+        self.hs_percentage: str = "{:.2%}".format(self.headshots / self.kills) if self.kills > 0 else "0%"
         self.kost: str = "{:.2%}".format(stats["kost"] / self.rounds)
         self.opening_kills: int = stats["opening_kills"]
         self.opening_deaths: int = stats["opening_deaths"]
@@ -125,13 +125,13 @@ class StatsSelector:
     def get_player_stats(self, side: str | None = None) -> list[PlayerStatsSelector]:
         query: QuerySet = (
             Player.objects.filter(team__round__in=self.roundQuerySet, team__is_own=True)
-            if not side else
+            if side is None else
             Player.objects.filter(team__round__in=self.roundQuerySet, team__is_own=True, team__side__iexact=side)
         )
         return [
             PlayerStatsSelector(
                 player=Player.objects.filter(uid=player_uid).first(),
-                stats=player_stats_aggregate(Player.objects.filter(uid=player_uid, team__round__in=self.roundQuerySet))
+                stats=player_stats_aggregate(query.filter(uid=player_uid))
             ) for player_uid in set(query.values_list("uid", flat=True))
         ]
 

@@ -7,6 +7,10 @@ from django.utils.translation import gettext_lazy as _
 from django.core.validators import FileExtensionValidator
 
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_pic = models.ImageField(upload_to='profile_pics')
+
 class Replay(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     timestamp = models.DateTimeField(auto_now_add=True)
