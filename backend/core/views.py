@@ -8,8 +8,10 @@ from .serializers import (RoundListUploadSerializer, RoundSerializer, ReplaySeri
 from .services.ReplayService import ReplayService, GameService
 from .services.RoundReplayService import RoundReplayService
 from .models import Round, RoundReplay
+from django_filters.rest_framework import DjangoFilterBackend
 from .selectors import (
     list_games,
+    list_games_by_map,
     retrieve_game,
     rounds_retrieve,
     round_list_queryset,
@@ -23,7 +25,12 @@ class GameViewSet(viewsets.ViewSet):
     lookup_field = 'match_id'
 
     def list(self, request, *args, **kwargs):
-        queryset = list_games(self.request.user)
+        map_query = self.request.query_params.get('map')
+        queryset = (
+            list_games_by_map(self.request.user, map_query)
+            if map_query is not None else
+            list_games(self.request.user)
+        )
         serializer = GameSerializer(queryset, many=True)
         serialized_data = serializer.data
         return Response(serialized_data, status=status.HTTP_200_OK)

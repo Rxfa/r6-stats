@@ -17,6 +17,17 @@ def list_games(user):
     ]
 
 
+def list_games_by_map(user, map):
+    return [
+        GameSelector(match_id) for match_id in
+        set(
+            Round.objects
+            .filter(replay__replay__uploaded_by=user, map=map)
+            .values_list("match_id", flat=True)
+        )
+    ]
+
+
 def retrieve_game(user, match_id):
     return GameSelector(match_id)
 
