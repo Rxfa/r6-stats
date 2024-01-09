@@ -22,7 +22,7 @@ from core import views
 router = routers.DefaultRouter()
 router.register(r'replays', views.FileUploadViewSet)
 router.register(r'games', views.GameViewSet, basename='games')
-router.register(r'rounds', views.RoundViewSet)
+router.register(r'rounds', views.RoundViewSet, basename='rounds')
 
 urlpatterns = [
     path('api/', include("djoser.urls")),

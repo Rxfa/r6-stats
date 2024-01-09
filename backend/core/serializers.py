@@ -126,3 +126,10 @@ class GameSerializer(serializers.Serializer):
     bans = BansSerializer(many=True, read_only=True)
     stats = StatsSerializer()
     rounds = RoundSerializer(many=True, read_only=True)
+
+
+class RoundListSerializer(serializers.Serializer):
+    plays = serializers.IntegerField(min_value=0)
+    wins = serializers.IntegerField(min_value=0, max_value=plays)
+    player_stats = serializers.DictField(child=PlayerStatsSerializer(many=True))
+    maps = serializers.DictField(child=StatsSerializer())

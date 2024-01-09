@@ -4,7 +4,8 @@ from rest_framework import mixins
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .serializers import (RoundListUploadSerializer, RoundSerializer, ReplaySerializer, GameSerializer)
+from .serializers import (RoundListUploadSerializer, RoundSerializer, ReplaySerializer, GameSerializer,
+                          RoundListSerializer)
 from .services.ReplayService import ReplayService, GameService
 from .services.RoundReplayService import RoundReplayService
 from .models import Round, RoundReplay
@@ -16,7 +17,7 @@ from .selectors import (
     rounds_retrieve,
     round_list_queryset,
     replay_list_queryset,
-    replay_exists
+    replay_exists, list_rounds
 )
 
 
@@ -49,15 +50,15 @@ class GameViewSet(viewsets.ViewSet):
             return Response({"error": "Replay could not be deleted"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-
-class RoundViewSet(viewsets.GenericViewSet, mixins.ListModelMixin):
-    queryset = Round.objects.all()
-    serializer_class = RoundSerializer
+class RoundViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        queryset = round_list_queryset(self.request.user)
-        serialized_data = self.serializer_class(queryset, many=True).data
+        map_query: bool = self.request.query_params.get("map") == "true"
+        result_query: str = self.request.query_params.get("won")
+        queryset = list_rounds(self.request.user, map_query, result_query)
+        serializer = RoundListSerializer(queryset)
+        serialized_data = serializer.data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
 

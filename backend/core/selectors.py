@@ -32,6 +32,28 @@ def retrieve_game(user, match_id):
     return GameSelector(match_id)
 
 
+def list_rounds(user, map_query, result_query):
+    query: QuerySet = Round.objects.filter(replay__replay__uploaded_by=user)
+    if map_query:
+        query: QuerySet = query.filter(map=map_query)
+    if result_query:
+        query: QuerySet = query.filter(won=True)
+    return RoundsSelector(query)
+
+
+class RoundsSelector:
+    def __init__(self, rounds):
+        self.data: QuerySet = rounds
+        self.plays: int = self.data.count()
+        self.wins: int = Team.objects.filter(round__in=self.data, is_own=True, won=True).count()
+        self.player_stats: dict = StatsSelector(self.data).individual
+        self.maps: dict = {
+            played_map: StatsSelector(self.data.filter(map=played_map))
+            for played_map in set(
+                self.data.values_list("map", flat=True)
+            )
+        }
+
 class BansSelector:
     def __init__(self, is_own, ATK, DEF):
         self.is_own: bool = is_own

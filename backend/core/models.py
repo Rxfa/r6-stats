@@ -20,10 +20,7 @@ class Replay(models.Model):
 class RoundReplay(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     replay = models.ForeignKey(Replay, on_delete=models.CASCADE, related_name='round_replays')
-    file = models.FileField(
-        upload_to="replays",
-    )
-
+    file = models.FileField(upload_to="replays")
 
 class Round(models.Model):
     replay = models.OneToOneField(RoundReplay, on_delete=models.CASCADE, primary_key=True)
