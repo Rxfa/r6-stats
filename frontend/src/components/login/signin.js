@@ -104,9 +104,8 @@ function SignIn(props) {
             duration: defaultTime,
             isClosable: true
         })
-        setTimeout(() => {
-            navigate(redirectTo);
-        }, 500);
+        navigate(redirectTo);
+
     };
 
 

@@ -1,5 +1,5 @@
 import { Tabs, TabList, TabPanels, Tab, TabPanel, useColorModeValue } from '@chakra-ui/react';
-import TableComponent from "./table";
+import GameTableComponent from "./gameTable";
 
 
 function TableTabsComponent(){
@@ -11,10 +11,10 @@ function TableTabsComponent(){
             </TabList>
             <TabPanels>
                 <TabPanel>
-                    <TableComponent/>
+                    <GameTableComponent/>
                 </TabPanel>
                 <TabPanel>
-                    <TableComponent/>
+                    <GameTableComponent/>
                 </TabPanel>
             </TabPanels>
         </Tabs>

@@ -23,6 +23,7 @@ import { useNavigate } from "react-router";
 import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import { FaHome } from 'react-icons/fa'
 import { getUser, logout, isLogged } from '../utils/utils';
+import {useEffect} from "react";
 
 const NavLink = (props) => {
   const { children } = props
@@ -47,7 +48,16 @@ function Navbar(props) {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+
   const user = getUser();
+  const isAuthenticated = !!user;
+
+  useEffect(() => {
+    if(!isAuthenticated){
+        navigate("/");
+    }
+  }, []);
+
 
   const handleHome = () => {
     navigate("/dashboard");
@@ -59,9 +69,7 @@ function Navbar(props) {
 
   const handleLogout = () => {
     logout();
-    if(!isLogged()){
-      navigate("/");
-    }
+    navigate("/");
   }
 
   return (
@@ -78,7 +86,7 @@ function Navbar(props) {
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
               {
-                isLogged() &&
+                isAuthenticated &&
                   <Menu>
                     <MenuButton
                       as={Button}

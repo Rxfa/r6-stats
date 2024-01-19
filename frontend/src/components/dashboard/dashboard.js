@@ -8,7 +8,7 @@ import {
   Stack,
   useColorModeValue,
 } from '@chakra-ui/react';
-import TableComponent from "./table";
+import GameTableComponent from "./gameTable";
 import TableTabsComponent from "./tableTabs";
 import { isLogged } from "../../utils/utils";
 import { useNavigate } from "react-router";
@@ -59,13 +59,9 @@ function Dashboard(){
       bg={useColorModeValue('gray.200', 'gray.900')}
       color={useColorModeValue('gray.700', 'gray.200')}
     >
-      <HStack spacing={stackSpacing}>
+      <Stack spacing={stackSpacing}>
         <TableTabsComponent/>
-        <Stack spacing={stackSpacing}>
-          <SortBox />
-          <FilterBox />
-        </Stack>
-      </HStack>
+      </Stack>
     </Flex>
    ) 
 }
