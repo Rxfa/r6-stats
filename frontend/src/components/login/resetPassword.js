@@ -1,14 +1,5 @@
-import { useState } from "react";
-import {
-    Flex,
-    FormControl,
-    FormLabel,
-    Input,
-    Stack,
-    Button,
-    Heading,
-    useColorModeValue,
-  } from '@chakra-ui/react';
+import {useState} from "react";
+import {Button, Flex, FormControl, FormLabel, Heading, Input, Stack, useColorModeValue,} from '@chakra-ui/react';
 
 function ResetPassword(props){
 
@@ -18,7 +9,7 @@ function ResetPassword(props){
     const handlePasswordChange = (e) => setPassword(e.target.value);
     const handleConfirmPasswordChange = (e) => setConfirmPassword(e.target.value);
 
-    const handleResetPassword = () => {}
+    const handleResetPassword = () => {} //TODO: implement
 
     return (
         <Flex>

@@ -4,25 +4,22 @@ import SignUp from "./signup";
 import SignIn from "./signin";
 import ForgotPassword from "./forgotPassword";
 import ResetPassword from "./resetPassword";
-import { Flex, useColorModeValue } from '@chakra-ui/react';
-import {getUser} from "../../utils/utils";
+import {Flex, useColorModeValue} from '@chakra-ui/react';
 import {useNavigate} from "react-router";
-
-axios.defaults.baseURL = 'http://localhost:8000';
+import {getUser} from "../../services/services";
 
 function Login(){
-
     const navigate = useNavigate();
     const user = getUser();
     const isAuthenticated = !!user;
 
     useEffect(() => {
-        if(isAuthenticated){
+        if(isAuthenticated)
             navigate("/dashboard");
-        }
     }, []);
 
     const [status, setStatus] = useState("SignIn");
+
     const handleClick = (status) => setStatus(status);
     return(
         <Flex

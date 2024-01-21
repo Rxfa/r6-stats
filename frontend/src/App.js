@@ -1,7 +1,7 @@
 import './App.css';
-import { ChakraProvider, Stack } from '@chakra-ui/react'
-import { Route, Routes } from "react-router";
-import { useState } from 'react';
+import {ChakraProvider, Stack} from '@chakra-ui/react'
+import {Route, Routes} from "react-router";
+import {useState} from 'react';
 import Login from './components/login/login';
 import axios from "axios";
 import Footer from './components/footer';

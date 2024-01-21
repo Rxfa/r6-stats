@@ -1,16 +1,15 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import {useEffect, useState} from "react";
 import {
     Box,
     Button,
     Flex,
     FormControl,
     FormLabel,
-    HStack,
-    Stack,
-    Select,
-    Divider,
     Heading,
+    HStack,
+    Select,
+    Stack,
     useColorModeValue,
 } from '@chakra-ui/react';
 

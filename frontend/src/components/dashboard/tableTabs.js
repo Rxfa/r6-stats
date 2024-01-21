@@ -1,5 +1,6 @@
-import { Tabs, TabList, TabPanels, Tab, TabPanel, useColorModeValue } from '@chakra-ui/react';
+import {Tab, TabList, TabPanel, TabPanels, Tabs} from '@chakra-ui/react';
 import GameTableComponent from "./gameTable";
+import RoundDashboardComponent from "./roundDashboard";
 
 
 function TableTabsComponent(){
@@ -14,7 +15,7 @@ function TableTabsComponent(){
                     <GameTableComponent/>
                 </TabPanel>
                 <TabPanel>
-                    <GameTableComponent/>
+                    <RoundDashboardComponent/>
                 </TabPanel>
             </TabPanels>
         </Tabs>

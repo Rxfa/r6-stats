@@ -1,26 +1,28 @@
 import axios from "axios";
-import { useState } from "react";
-import { useNavigate } from "react-router";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
-import { setAxiosAuthToken, defaultTime, unsetCurrentUser, setToken } from "../../utils/utils";
+import {useState} from "react";
+import {useNavigate} from "react-router";
+import {ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import {
+    Box,
+    Button,
+    Checkbox,
     Flex,
     FormControl,
     FormLabel,
-    Input,
-    Box,
-    Checkbox,
-    Stack,
-    Button,
     Heading,
-    Text,
-    useColorModeValue,
-    Link as ChakraLink, 
+    Input,
     InputGroup,
     InputRightElement,
-    useToast,
-    useBoolean
-  } from '@chakra-ui/react';
+    Link as ChakraLink,
+    Stack,
+    Text,
+    useBoolean,
+    useColorModeValue,
+    useToast
+} from '@chakra-ui/react';
+
+import {defaultTime, setToken, unsetCurrentUser} from "../../services/services";
+import {getUserInfo, signInUser} from "../../services/user";
 
 
 function SignIn(props) {
@@ -53,8 +55,7 @@ function SignIn(props) {
     }
 
     const login = (userData) => {
-        axios
-            .post("api/token/login/", userData)
+        signInUser(userData)
             .then(response => {
                 console.log(response);
                 const { auth_token } = response.data;
@@ -81,8 +82,7 @@ function SignIn(props) {
     }
 
     const getCurrentUser = redirectTo => {
-        axios
-          .get("/api/users/me/")
+        getUserInfo()
           .then(response => {
             const user = {
               username: response.data.username,

@@ -1,21 +1,18 @@
-import { 
-    Avatar, 
-    Stack, 
-    useColorModeValue, 
-    FormControl, 
-    FormLabel, 
-    Select, 
-    Divider, 
-    Text,
-    Badge
-} from "@chakra-ui/react";
-import { getUser } from "../../utils/utils";
-import { ChangePassword } from "./changePassword";
-import { ChangeUsername } from "./changeUsername";
-import { DeleteAccount } from "./delete";
+import {Avatar, Badge, Divider, Stack, Text, useColorModeValue} from "@chakra-ui/react";
+import {ChangePassword} from "./changePassword";
+import {ChangeUsername} from "./changeUsername";
+import {DeleteAccount} from "./delete";
+
+import {getUser} from "../../services/services";
+import {useEffect, useState} from "react";
 
 export function UserCard(){
-    const user = getUser()
+    const [user, setUser] = useState({})
+
+    useEffect(() => {
+        setUser(getUser());
+    }, []);
+
     return(
         <Stack
             bg={useColorModeValue('gray.100', 'gray.800')}

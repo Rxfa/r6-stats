@@ -1,25 +1,28 @@
-import { useState } from "react";
+import {useState} from "react";
 import axios from "axios";
 import {
+    Box,
+    Button,
     Flex,
     FormControl,
     FormLabel,
-    Input,
-    Box,
-    Stack,
-    Button,
     Heading,
-    Text,
-    useColorModeValue,
-    Link as ChakraLink, 
     HStack,
+    Input,
     InputGroup,
     InputRightElement,
-    useToast,
-    useBoolean
-  } from '@chakra-ui/react';
-import { emailIsValid, defaultTime } from "../../utils/utils";
-import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+    Link as ChakraLink,
+    Stack,
+    Text,
+    useBoolean,
+    useColorModeValue,
+    useToast
+} from '@chakra-ui/react';
+import {emailIsValid} from "../../utils/utils";
+import {ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+
+import {defaultTime} from "../../services/services";
+import {createUser} from "../../services/user";
 
 axios.defaults.baseURL = 'http://localhost:8000';
 
@@ -50,8 +53,7 @@ function SignUp(props){
                     username: username,
                     password: password
                 }; 
-                axios
-                    .post("/api/users/", userData)
+                createUser(userData)
                     .then(res => {
                         toast({
                             title: "Account created successfully",

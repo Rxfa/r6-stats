@@ -1,26 +1,35 @@
 import axios from "axios";
-import { useState, useRef, useEffect } from "react";
-import { AddModalComponent } from "./add";
-import { DeleteAlertComponent } from "./delete";
-import { ViewModalComponent } from "./view";
-import {
-  Checkbox,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
-  Stack,
-  useColorModeValue,
-} from '@chakra-ui/react';
-import { axios_instance } from "../../utils/utils";
+import {useEffect, useState} from "react";
+import {AddModalComponent} from "./add";
+import {Stack, Table, TableContainer, Tbody, Td, Th, Thead, Tr, useColorModeValue,} from '@chakra-ui/react';
+import {getGames} from "../../services/games";
+
+
+import {api} from "../../services/axiosConfig";
 
 axios.defaults.baseURL = 'http://localhost:8000';
 
-function GameTableComponent() {
+function GameTableRow(props){
+    const game = props.game;
+    const own_bans = game.bans.filter(i => i.is_own === true);
+    const opp_bans = game.bans.filter(i => i.is_own === false);
+    return(
+      <Tr>
+        <Td>{game.date}</Td>
+        <Td>{game.map}</Td>
+        <Td>{`${game.won}`}</Td>
+        <Td>{`${game.score.own} - ${game.score.opp}`}</Td>
+        <Td>{own_bans.ATK ? `${own_bans.ATK}` : "None"}</Td>
+        <Td>{own_bans.DEF ? `${own_bans.DEF}` : "None"}</Td>
+        <Td>{opp_bans.ATK ? `${opp_bans.ATK}` : "None"}</Td>
+        <Td>{opp_bans.DEF ? `${opp_bans.DEF}` : "None"}</Td>
+      </Tr>
+    );
+}
 
+
+function GameTableComponent() {
+    const [isLoading, setIsLoading] = useState(true);
   const [games, setGames] = useState([]);
   const [playedMap, setPlayedMap] = useState("");
   const [won, setWon] = useState(false);
@@ -30,24 +39,18 @@ function GameTableComponent() {
   const [oppDEFBan, setOppDEFBan] = useState("");
 
   useEffect(() => {
-    axios_instance
-      .get("games/")
-      .then(
-        res => {
-          console.log(res.data);
-          setGames(res.data);
-        }
-      )
-      .catch(error => console.error(error));
+    setIsLoading(true)
+    getGames
+        .then(res => setGames(res.data))
+        .catch(error => console.error(error));
+    setIsLoading(false)
   }, []);
 
   return(
-    <TableContainer 
+    <TableContainer
      bg={useColorModeValue('white', 'gray.800')}
      rounded={"2xl"}
      boxShadow={"2xl"}
-     minHeight={"3xl"}
-         
     >
       <Stack direction={"row-reverse"} spacing={"auto"} py={"4"} mx={"6"}>
         <AddModalComponent />
@@ -64,20 +67,7 @@ function GameTableComponent() {
           <Th>Opp - DEF ban</Th>
         </Thead>
         <Tbody>
-          {
-            games.map(game => (
-              <Tr>
-                <Td>{game.date}</Td>
-                <Td>{game.map}</Td>
-                <Td>{game.won}</Td>
-                <Td>{`${game.score.own} - ${game.score.opp}`}</Td>
-                <Td>{game.bans.find(a => a.is_own === true).ATK}</Td>
-                <Td>{game.bans.find(a => a.is_own === true).DEF}</Td>
-                <Td>{game.bans.find(a => a.is_own === false).ATK}</Td>
-                <Td>{game.bans.find(a => a.is_own === false).DEF}</Td>
-              </Tr>
-            ))
-          }
+          {games.map(game => <GameTableRow game={game}/>)}
         </Tbody>
       </Table>
     </TableContainer>

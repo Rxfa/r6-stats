@@ -1,17 +1,9 @@
-import { useState } from "react";
-import { setPassword } from "./setActions";
-import { defaultTime, emailIsValid } from "../../utils/utils";
-import {
-    Flex,
-    FormControl,
-    Input,
-    Stack,
-    Button,
-    Heading,
-    Text,
-    useColorModeValue,
-    useToast,
-  } from '@chakra-ui/react';
+import {useState} from "react";
+import {emailIsValid} from "../../utils/utils";
+import {Button, Flex, FormControl, Heading, Input, Stack, Text, useColorModeValue, useToast,} from '@chakra-ui/react';
+
+import {defaultTime} from "../../services/services";
+import {setPassword} from "../../services/user";
 
 function ForgotPassword(props){
     const toast = useToast()

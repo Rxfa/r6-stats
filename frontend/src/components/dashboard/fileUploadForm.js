@@ -1,7 +1,9 @@
-import { React, useState } from "react";
-import { Input, Button, VStack } from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
-import { axios_instance } from "../../utils/utils";
+import {React, useState} from "react";
+import {Button, Input, VStack} from "@chakra-ui/react";
+import {useForm} from "react-hook-form";
+
+
+import {api} from "../../services/axiosConfig";
 
 export function FileUploadFormComponent(){
     const [selectedFiles, setSelectedFiles] = useState([]); 
@@ -18,7 +20,7 @@ export function FileUploadFormComponent(){
             formData.append("files", data.files[i]);
         }
 
-        axios_instance.post("/replay/", formData)
+        api.post("/replay/", formData)
             .then(res => console.log(res))
             .catch(e => console.error("Error uploading files:", e))
 
@@ -32,4 +34,4 @@ export function FileUploadFormComponent(){
             </VStack>
         </form>
     );
-};
+}

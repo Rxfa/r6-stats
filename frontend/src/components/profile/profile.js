@@ -1,5 +1,5 @@
-import { Flex, useColorModeValue } from "@chakra-ui/react";
-import { UserCard } from "./userCard";
+import {Flex, useColorModeValue} from "@chakra-ui/react";
+import {UserCard} from "./userCard";
 
 function Profile(){
     return(
