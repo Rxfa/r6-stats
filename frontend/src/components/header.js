@@ -1,28 +1,27 @@
 'use client'
 
 import {
-  Box,
-  Flex,
   Avatar,
-  Text,
+  Box,
   Button,
+  Center,
+  Flex,
   Menu,
   MenuButton,
-  MenuList,
-  MenuItem,
   MenuDivider,
-  useDisclosure,
-  useColorModeValue,
+  MenuItem,
+  MenuList,
   Stack,
   useColorMode,
-  Center,
-  useBoolean,
-  Link,
+  useColorModeValue,
+  useDisclosure,
 } from '@chakra-ui/react'
-import { useNavigate } from "react-router";
-import { MoonIcon, SunIcon } from '@chakra-ui/icons'
-import { FaHome } from 'react-icons/fa'
-import { getUser, logout, isLogged } from '../utils/utils';
+import {useNavigate} from "react-router";
+import {MoonIcon, SunIcon} from '@chakra-ui/icons'
+import {FaHome} from 'react-icons/fa'
+import {useEffect} from "react";
+
+import {getUser, logout} from "../services/services";
 
 const NavLink = (props) => {
   const { children } = props
@@ -47,7 +46,16 @@ function Navbar(props) {
   const { colorMode, toggleColorMode } = useColorMode();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const navigate = useNavigate();
+
   const user = getUser();
+  const isAuthenticated = !!user;
+
+  useEffect(() => {
+    if(!isAuthenticated){
+        navigate("/");
+    }
+  }, []);
+
 
   const handleHome = () => {
     navigate("/dashboard");
@@ -59,9 +67,7 @@ function Navbar(props) {
 
   const handleLogout = () => {
     logout();
-    if(!isLogged()){
-      navigate("/");
-    }
+    navigate("/");
   }
 
   return (
@@ -78,7 +84,7 @@ function Navbar(props) {
                 {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
               </Button>
               {
-                isLogged() &&
+                isAuthenticated &&
                   <Menu>
                     <MenuButton
                       as={Button}

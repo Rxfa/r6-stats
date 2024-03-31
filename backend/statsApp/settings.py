@@ -32,7 +32,7 @@ REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
     # or allow read-only access for unauthenticated users.
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
+        'rest_framework.authentication.TokenAuthentication',
     ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly"
@@ -45,7 +45,7 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {"anon": "10000/day", "user": "1000000/day"},
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
-    "PAGE_SIZE": 50,
+    "PAGE_SIZE": 15,
 }
 
 DJOSER = {"USER_ID_FIELD": "username"}
@@ -61,10 +61,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_filters",
     "corsheaders",
+    "djoser",
     "rest_framework",
     "core.apps.CoreConfig",
     "rest_framework.authtoken",
-    "djoser",
+    "crispy_forms",
 ]
 
 MIDDLEWARE = [
@@ -82,9 +83,12 @@ ROOT_URLCONF = "statsApp.urls"
 
 # CORS_ORIGIN_ALLOW_ALL = True
 
+
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://localhost:8000"
 ]
 
 TEMPLATES = [

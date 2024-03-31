@@ -1,13 +1,4 @@
-import {
-    Button,
-    Flex,
-    FormControl,
-    FormLabel,
-    Stack,
-    Select,
-    Heading,
-    useColorModeValue,
-} from '@chakra-ui/react';
+import {Button, Flex, FormControl, FormLabel, Heading, Select, Stack, useColorModeValue,} from '@chakra-ui/react';
 
 export function SortBox(){
     return(

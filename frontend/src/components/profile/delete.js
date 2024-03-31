@@ -1,15 +1,14 @@
 import {
     AlertDialog,
     AlertDialogBody,
+    AlertDialogContent,
     AlertDialogFooter,
     AlertDialogHeader,
-    AlertDialogContent,
     AlertDialogOverlay,
-    AlertDialogCloseButton,
     Button,
     useDisclosure
-  } from '@chakra-ui/react'
-import { useRef } from 'react'
+} from '@chakra-ui/react'
+import {useRef} from 'react'
 
 export function DeleteAccount() {
     const { isOpen, onOpen, onClose } = useDisclosure()

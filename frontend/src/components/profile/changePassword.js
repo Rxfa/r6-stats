@@ -1,13 +1,13 @@
-import { 
-    useDisclosure,
+import {
     Button,
     Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
     ModalBody,
-    ModalFooter
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    useDisclosure
 } from "@chakra-ui/react"
 
 export function ChangePassword() {

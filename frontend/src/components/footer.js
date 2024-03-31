@@ -1,15 +1,6 @@
-import {
-  Box,
-  chakra,
-  Container,
-  Spacer,
-  Stack,
-  Text,
-  useColorModeValue,
-  VisuallyHidden,
-} from '@chakra-ui/react'
+import {Box, chakra, Container, Spacer, Stack, Text, useColorModeValue, VisuallyHidden,} from '@chakra-ui/react'
 
-import { FaDiscord, FaGithub, FaInstagram } from 'react-icons/fa'
+import {FaDiscord, FaGithub, FaInstagram} from 'react-icons/fa'
 
 const SocialButton = ({children, label, href,}) => {
   return (

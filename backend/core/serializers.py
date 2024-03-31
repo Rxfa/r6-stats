@@ -1,91 +1,135 @@
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Game, Round, Player, JSONUpload, Operator, Map
+from .models import Round, Team, Player, RoundReplay, Replay
 
 
-class MapSerializer(serializers.HyperlinkedModelSerializer):
+class ScoreSerializer(serializers.Serializer):
+    own = serializers.IntegerField(min_value=0)
+    opp = serializers.IntegerField(min_value=0)
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, attrs):
+        user = authenticate(username=attrs['username'], password=attrs['password'])
+        if not user:
+            raise serializers.ValidationError('Incorrect username or password.')
+        if not user.is_active:
+            raise serializers.ValidationError('User is disabled.')
+        return {'user': user}
+
+
+class RoundUploadSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Map
-        fields = ["name"]
+        model = RoundReplay
+        fields = ("file",)
 
 
-class OperatorSerializer(serializers.HyperlinkedModelSerializer):
+class ReplaySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Operator
-        fields = ["icon", "name", "side"]
+        model = Replay
+        fields = "__all__"
 
 
-class PlayerSerializer(serializers.ModelSerializer):
-    """Player Serializer"""
-
-    class Meta:
-        model = Player
-        fields = [
-            "id",
-            "name",
-            "rating",
-            "rounds",
-            "kills",
-            "deaths",
-            "kd_diff",
-            "kd_ratio",
-            "kpr",
-            "headshots",
-            "hs_percentage",
-            "entry_kills",
-            "entry_deaths",
-            "entry_diff",
-            "clutches",
-            "multikills",
-            "plants",
-            "disables",
-            "kost",
-            "srv",
-        ]
+class RoundListUploadSerializer(serializers.Serializer):
+    rounds = serializers.ListField(child=serializers.FileField(allow_empty_file=False))
 
 
-class RoundSerializer(serializers.ModelSerializer):
-    """Round Serializer"""
-
-    class Meta:
-        model = Round
-        fields = ["number", "site", "side", "won", "win_condition"]
-
-
-class GameSerializer(serializers.ModelSerializer):
-    """Game Serializer"""
-
-    rounds = RoundSerializer(many=True)
-    stats = PlayerSerializer(many=True)
-
-    class Meta:
-        model = Game
-        fields = [
-            "id",
-            "map",
-            "score",
-            "own_atk_ban",
-            "own_def_ban",
-            "opp_atk_ban",
-            "opp_def_ban",
-            "rounds",
-            "stats",
-        ]
+class PlayerSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=50)
+    spawn = serializers.CharField(max_length=50)
+    operator = serializers.CharField(max_length=50)
+    kills = serializers.IntegerField(min_value=0, max_value=5)
+    assists = serializers.IntegerField(min_value=0, max_value=kills)
+    headshots = serializers.IntegerField(min_value=0, max_value=kills)
+    died = serializers.BooleanField()
+    opening_kill = serializers.BooleanField()
+    opening_death = serializers.BooleanField()
+    entry_kill = serializers.BooleanField()
+    entry_death = serializers.BooleanField()
+    refragged = serializers.BooleanField()
+    traded = serializers.BooleanField()
+    planted = serializers.BooleanField()
+    time_of_plant = serializers.IntegerField(min_value=0, max_value=180)
+    disabled = serializers.BooleanField()
+    time_of_disable = serializers.IntegerField(min_value=0, max_value=180)
+    kost = serializers.BooleanField()
+    multikill = serializers.BooleanField()
 
 
-class UploadSerializer(serializers.HyperlinkedModelSerializer):
-    """JSON file upload Serializer"""
+class PlayerStatsSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=50)
+    rounds = serializers.IntegerField(min_value=0)
+    kills = serializers.IntegerField(min_value=0)
+    deaths = serializers.IntegerField(min_value=0, max_value=rounds)
+    kd_diff = serializers.IntegerField()
+    kd_ratio = serializers.CharField(max_length=50)
+    kpr = serializers.CharField(max_length=50)
+    assists = serializers.IntegerField(min_value=0, max_value=kills)
+    headshots = serializers.IntegerField(min_value=0, max_value=kills)
+    hs_percentage = serializers.CharField(max_length=50)
+    kost = serializers.CharField(max_length=50)
+    opening_kills = serializers.IntegerField(min_value=0, max_value=rounds)
+    opening_deaths = serializers.IntegerField(min_value=0, max_value=rounds)
+    opening_diff = serializers.IntegerField()
+    entry_kills = serializers.IntegerField(min_value=0, max_value=rounds)
+    entry_deaths = serializers.IntegerField(min_value=0, max_value=rounds)
+    entry_diff = serializers.IntegerField()
+    refrags = serializers.IntegerField(min_value=0, max_value=kills)
+    trades = serializers.IntegerField(min_value=0, max_value=deaths)
+    plants = serializers.IntegerField(min_value=0)
+    disables = serializers.IntegerField(min_value=0)
+    multikills = serializers.IntegerField(min_value=0, max_value=rounds)
+    survival_rate = serializers.CharField(max_length=50)
 
-    class Meta:
-        model = JSONUpload
-        fields = ["id", "url"]
+
+class RoundSerializer(serializers.Serializer):
+    number = serializers.IntegerField(min_value=0)
+    score = ScoreSerializer(read_only=True)
+    won = serializers.BooleanField(read_only=True)
+    win_condition = serializers.CharField(max_length=50, read_only=True)
+    timestamp = serializers.DateTimeField(read_only=True)
+    site = serializers.CharField(max_length=50, read_only=True)
+    players = PlayerSerializer(many=True, read_only=True)
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    """User Serializer"""
+class BansSerializer(serializers.Serializer):
+    is_own = serializers.BooleanField()
+    ATK = serializers.CharField(max_length=50)
+    DEF = serializers.CharField(max_length=50)
 
-    games = GameSerializer(many=True)
 
-    class Meta:
-        model = User
-        fields = ["url", "username", "email", "games"]
+class SiteSerializer(serializers.Serializer):
+    site = serializers.CharField(max_length=50, read_only=True)
+    plays = serializers.IntegerField(read_only=True)
+    wins = serializers.IntegerField(read_only=True, min_value=plays)
+
+
+class TeamStatsSerializer(serializers.Serializer):
+    sites = SiteSerializer(many=True, read_only=True)
+
+
+class StatsSerializer(serializers.Serializer):
+    team = serializers.DictField(child=TeamStatsSerializer())
+    individual = serializers.DictField(child=PlayerStatsSerializer(many=True))
+
+
+class GameSerializer(serializers.Serializer):
+    match_id = serializers.CharField(max_length=50)
+    won = serializers.BooleanField()
+    map = serializers.CharField(max_length=50)
+    date = serializers.DateTimeField()
+    score = ScoreSerializer()
+    bans = BansSerializer(many=True, read_only=True)
+    stats = StatsSerializer()
+    rounds = RoundSerializer(many=True, read_only=True)
+
+
+class RoundListSerializer(serializers.Serializer):
+    plays = serializers.IntegerField(min_value=0)
+    wins = serializers.IntegerField(min_value=0, max_value=plays)
+    player_stats = serializers.DictField(child=PlayerStatsSerializer(many=True))
+    maps = serializers.DictField(child=StatsSerializer())

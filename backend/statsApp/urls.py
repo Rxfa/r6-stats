@@ -17,24 +17,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
 from core import views
 
 router = routers.DefaultRouter()
-
-router.register(r"users", views.UserViewSet)
-router.register(r"games", views.GameViewSet)
-router.register(r"upload", views.UploadViewSet)
-
-router.register(r"mappool", views.MappoolViewSet)
-router.register(r"operators", views.OperatorViewSet)
+router.register(r'replays', views.FileUploadViewSet)
+router.register(r'games', views.GameViewSet, basename='games')
+router.register(r'rounds', views.RoundViewSet, basename='rounds')
 
 urlpatterns = [
-    path("", include(router.urls)),
-    path("", include("rest_framework.urls", namespace="rest_framework")),
-    path("api/", include("djoser.urls")),
-    path("api/", include("djoser.urls.authtoken")),
+    path('api/', include("djoser.urls")),
+    path('api/', include('djoser.urls.authtoken')),
 ]
+
+urlpatterns += router.urls

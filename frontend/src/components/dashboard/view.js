@@ -1,47 +1,27 @@
-import { useState } from "react";
-import { ChevronDownIcon } from '@chakra-ui/icons';
-  import {
-    Bar,
-    BarChart,
-    PieChart,
-    Pie,
-    ResponsiveContainer,
-    Cell,
-    LabelList
-  } from "recharts";
-import { StatsTable } from "../stats/statsTable";
-import { individualStats } from "./data";  
+import {useState} from "react";
+import {ChevronDownIcon} from '@chakra-ui/icons';
+import {StatsTable} from "../stats/statsTable";
 import {
+    Button,
     Menu,
     MenuButton,
-    MenuList,
     MenuItem,
+    MenuList,
     Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
     ModalBody,
     ModalCloseButton,
-    Tabs, 
-    TabList, 
-    TabPanels, 
-    Tab, 
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Tab,
+    TabList,
     TabPanel,
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    useDisclosure,
-    Button,
-    Divider,
-    Text,
-    HStack,
-    Stack
-  } from '@chakra-ui/react';
-import { Pies } from "../stats/pies";
+    TabPanels,
+    Tabs,
+    useDisclosure
+} from '@chakra-ui/react';
+import {Pies} from "../stats/pies";
 
 export function ViewModalComponent(games){
     const { isOpen, onOpen, onClose } = useDisclosure()

@@ -1,30 +1,15 @@
 import {
     Button,
-    Flex,
     Modal,
-    ModalOverlay,
-    ModalContent,
-    ModalHeader,
-    ModalFooter,
     ModalBody,
     ModalCloseButton,
-    Tabs, 
-    TabList, 
-    TabPanels, 
-    Tab, 
-    TabPanel,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
     useDisclosure,
-    Table,
-    Thead,
-    Tbody,
-    Tr,
-    Th,
-    Td,
-    TableCaption,
-    TableContainer,
 } from '@chakra-ui/react';
-
-import { AddIcon, ViewIcon } from '@chakra-ui/icons';
+import {FileUploadFormComponent} from "./fileUploadForm";
 
 export function AddModalComponent(){
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -39,7 +24,7 @@ export function AddModalComponent(){
                     <ModalHeader>Stats</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
-                        Add
+                        <FileUploadFormComponent />
                     </ModalBody>
                     <ModalFooter>
                         <Button colorScheme='red' mr={2} onClick={onClose}>
