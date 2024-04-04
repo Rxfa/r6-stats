@@ -2,6 +2,10 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import {Providers} from "@/app/providers";
 import {fonts} from "@/app/fonts";
+import {theme} from "@/app/theme";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import {Flex} from "@chakra-ui/react";
 
 export const metadata = {
   title: "Create Next App",
@@ -12,8 +16,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={fonts.rubik.variable}>
-        <Providers>
-          {children}
+        <Providers theme={theme}>
+            <Flex justifyContent={"space-around"} flexDirection={"column"}>
+                <Navbar/>
+                {children}
+                <Footer/>
+            </Flex>
         </Providers>
       </body>
     </html>

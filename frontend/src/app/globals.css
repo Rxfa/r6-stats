@@ -81,6 +81,7 @@
 
 html,
 body {
+  height: 100%;
   max-width: 100vw;
   overflow-x: hidden;
 }
@@ -104,4 +105,8 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+#__next{
+  height: 100%;
 }
