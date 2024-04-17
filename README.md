@@ -51,8 +51,6 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![product-screenshot]()
-
 The more analytical and data-heavy side of eSports is often ignored or neglected by amateur and semi-professional teams. When it comes to Rainbow Six Siege, we find no exception.
 
 We find this to be mainly because most players and staff members lack the know-how or can't afford to spend hours and hours gathering and putting together all the statistical data from scrims and competitive games that their teams partake on a consistent basis.
@@ -64,6 +62,7 @@ The main goal of this project is to develop a tool that can give everyone involv
 ### Built With
 
 - [![Python][Python]][Python-url]
+- [![Next.js][Next.js]][Nextjs-url]
 - [![Javascript][Javascript]][Javascript-url]
 - [![Node.js][Node.js]][Node-url]
 - [![React][React.js]][React-url]
@@ -194,7 +193,7 @@ Project Link: [https://github.com/Rxfa/r6-stats](https://github.com/Rxfa/r6-stat
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
 [license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=for-the-badge
-[license-url]: https://github.com/rxfa/weather-app/LICENSE.txt
+[license-url]: https://github.com/rxfa/r6-stats/LICENSE.txt
 [Javascript]: https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E
 [Javascript-url]:https://developer.mozilla.org/en-US/docs/Web/JavaScript
 [Python]: https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54
@@ -209,3 +208,5 @@ Project Link: [https://github.com/Rxfa/r6-stats](https://github.com/Rxfa/r6-stat
 [DRF-url]: https://www.django-rest-framework.org/
 [Chakra-ui]: https://img.shields.io/badge/chakra-%234ED1C5.svg?style=for-the-badge&logo=chakraui&logoColor=white
 [Chakra-ui-url]: https://chakra-ui.com/
+[Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=next.js&logoColor=white
+[Nextjs-url]: https://nextjs.org/
