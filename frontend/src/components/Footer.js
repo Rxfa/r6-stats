@@ -5,8 +5,6 @@ function SocialButton({children, label, href}){
     return (
         <Button
             rounded={'full'}
-            w={8}
-            h={8}
             cursor={'pointer'}
             as={'a'}
             href={href}

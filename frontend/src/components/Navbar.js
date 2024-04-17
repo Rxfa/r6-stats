@@ -14,6 +14,8 @@ import {
 } from '@chakra-ui/react'
 import {useRouter} from "next/navigation";
 import {AddIcon, ChevronDownIcon} from "@chakra-ui/icons";
+import AddVOD from "@/components/AddVOD";
+import AddGame from "@/components/AddGame";
 
 export default function Navbar(){
     const router = useRouter()
@@ -48,8 +50,8 @@ export default function Navbar(){
                         variant={"solid"}
                     />
                     <MenuList>
-                        <MenuItem>Add VOD</MenuItem>
-                        <MenuItem>Add Game</MenuItem>
+                        <MenuItem><AddVOD/></MenuItem>
+                        <MenuItem><AddGame/></MenuItem>
                     </MenuList>
                 </Menu>
                 <Menu>
@@ -60,9 +62,9 @@ export default function Navbar(){
                                 'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
                             }
                         />
-                        <Text>
-                            Placeholder_name
-                        </Text>
+                        <Heading size={'sm'}>
+                            Dummy
+                        </Heading>
                     <MenuButton
                         as={IconButton}
                         aria-label={"Profile"}

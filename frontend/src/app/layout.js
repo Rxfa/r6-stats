@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={fonts.rubik.variable}>
         <Providers theme={theme}>
-            <Flex justifyContent={"space-around"} flexDirection={"column"}>
+            <Flex justifyContent={"space-between"} flexDirection={"column"}>
                 <Navbar/>
                 {children}
                 <Footer/>
