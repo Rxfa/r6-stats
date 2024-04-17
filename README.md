@@ -117,30 +117,6 @@ The main goal of this project is to develop a tool that can give everyone involv
     npm run start
     ```
 
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
-
-## Roadmap
-
-- [x] - Setup the login system
-
-- [x] - Dark/light mode
-
-- [ ] - Ability to upload match replays
-
-- [ ] - Display detailed stats
-
-- [ ] - Search bar autocomplete(to search for users)
-
-- [ ] - Friend Request System
-
-- [ ] - Real-time Notification System
-
-- [ ] - Ability to create groups to share data with
-
-- [ ] - Real-time Chat(???)
-
-
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- CONTRIBUTING -->
