@@ -1,6 +1,10 @@
 import {Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Link} from "@chakra-ui/react";
+import {useRouter} from "next/navigation";
 
 export default function GamesTable({games}){
+
+    const router = useRouter()
+
     return(
         <TableContainer>
             <Table size={"lg"}>
@@ -23,12 +27,19 @@ export default function GamesTable({games}){
                                         _hover={{
                                             bg: "lightblue"
                                         }}
+                                        onClick={() => {
+                                            router.push(`games/${game.match_id}`)
+                                        }}
                                     >
                                         <Td>{new Date(game.date).toLocaleDateString()}</Td>
                                         <Td>{game.map}</Td>
-                                        <Td>{game.score.own} - {game.score.against}</Td>
-                                        <Td>{game.bans.own.atk} - {game.bans.own.def}</Td>
-                                        <Td>{game.bans.against.atk} - {game.bans.against.def}</Td>
+                                        <Td>{game.score.own} - {game.score.opp}</Td>
+                                        <Td>
+                                            {game.bans.find(e => e.is_own).ATK} - {game.bans.find(e => e.is_own).DEF}
+                                        </Td>
+                                        <Td>
+                                            {game.bans.find(e => e.is_own).ATK} - {game.bans.find(e => !(e.is_own)).DEF}
+                                        </Td>
                                     </Tr>
                                 </Link>
                             )

@@ -16,14 +16,27 @@ import {useRouter} from "next/navigation";
 import {AddIcon, ChevronDownIcon} from "@chakra-ui/icons";
 import AddVOD from "@/components/AddVOD";
 import AddGame from "@/components/AddGame";
+import {logout} from "@/app/api/logout";
+import {useEffect, useState} from "react";
 
 export default function Navbar(){
+    const [user, setUser] = useState({})
     const router = useRouter()
 
     const handleTabChange = (idx) => {
         const paths = ["games", "team", "individual", "vods"]
-        router.push(`${paths[idx]}`)
+        router.push(`/${paths[idx]}`)
     }
+
+    const handleLogout = async () => {
+        await logout();
+        router.push("/signin");
+    }
+
+    useEffect(() => {
+        setUser(JSON.parse(localStorage.getItem('user')));
+        console.log(user);
+    }, []);
 
     return(
         <Flex minW={"%100"} alignItems={'center'} gap={12} mx={6} mt={4}>
@@ -59,11 +72,11 @@ export default function Navbar(){
                         <Avatar
                             size={'md'}
                             src={
-                                'https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9'
+                                'https://i.kym-cdn.com/photos/images/newsfeed/001/553/696/a42.jpg'
                             }
                         />
                         <Heading size={'sm'}>
-                            Dummy
+                            {user.username}
                         </Heading>
                     <MenuButton
                         as={IconButton}
@@ -79,7 +92,7 @@ export default function Navbar(){
                         <MenuItem>Profile</MenuItem>
                         <MenuItem>Settings</MenuItem>
                         <MenuDivider />
-                        <MenuItem>Logout</MenuItem>
+                        <MenuItem onClick={handleLogout}>Logout</MenuItem>
                     </MenuList>
                 </Menu>
             </Flex>

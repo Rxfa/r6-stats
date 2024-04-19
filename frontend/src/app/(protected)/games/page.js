@@ -9,10 +9,18 @@ import GamesTable from "@/components/GamesTable";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import {games} from "@/app/lib/games-placeholder";
 import {useEffect, useState} from "react";
+import BarChart from "@/components/charts/BarChart";
+import {Bar, ResponsiveContainer} from "recharts";
+import {getGames} from "@/app/api/getGames";
 
 export default function Page(){
-    const [data, setDate] = useState(games)
+    const [data, setData] = useState([])
     const [maps, setMaps] = useState([])
+    const [plays, setPlays] = useState([])
+
+    useEffect(() => {
+        getGames().then(games => setData(games))
+    }, []);
 
     useEffect(() => {
         const uniqueMaps = Array.from(new Set(data.map(game => game.map)))
@@ -44,7 +52,7 @@ export default function Page(){
                         </Select>
                     </HStack>
                 </Flex>
-                <GamesTable games={games}/>
+                <GamesTable games={data}/>
                 <Stack direction={"column-reverse"}>
                     <Stack>1-10 of 50</Stack>
                 </Stack>
