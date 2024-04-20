@@ -1,5 +1,6 @@
-import {Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Link} from "@chakra-ui/react";
+import {Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Link, IconButton} from "@chakra-ui/react";
 import {useRouter} from "next/navigation";
+import {ArrowForwardIcon, ExternalLinkIcon} from "@chakra-ui/icons";
 
 export default function GamesTable({games}){
 
@@ -15,21 +16,15 @@ export default function GamesTable({games}){
                         <Th>Score</Th>
                         <Th>Our Bans</Th>
                         <Th>Their Bans</Th>
+                        <Th>Game</Th>
                     </Tr>
                 </Thead>
                 <Tbody>
                     {
                         games.map(
                             (game) => (
-                                <Link href={"#"} cursor={"pointer"} display={"contents"}>
                                     <Tr
                                         key={game.id}
-                                        _hover={{
-                                            bg: "lightblue"
-                                        }}
-                                        onClick={() => {
-                                            router.push(`games/${game.match_id}`)
-                                        }}
                                     >
                                         <Td>{new Date(game.date).toLocaleDateString()}</Td>
                                         <Td>{game.map}</Td>
@@ -40,8 +35,12 @@ export default function GamesTable({games}){
                                         <Td>
                                             {game.bans.find(e => e.is_own).ATK} - {game.bans.find(e => !(e.is_own)).DEF}
                                         </Td>
+                                        <Td>
+                                            <Link href={`games/${game.match_id}`} cursor={"pointer"} display={"contents"}>
+                                                <IconButton aria-label='Game-detailed' icon={<ArrowForwardIcon />} />
+                                            </Link>
+                                        </Td>
                                     </Tr>
-                                </Link>
                             )
                         )
                     }

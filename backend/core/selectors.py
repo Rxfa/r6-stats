@@ -148,7 +148,7 @@ class StatsSelector:
         if query:
             query: QuerySet = (
                 query.values_list("round__site")
-                .annotate(plays=Count("round__site"), wins=Count("won", only=Q(won=True)))
+                .annotate(plays=Count("round__site"), wins=Count("won", filter=Q(won=True)))
             )
             # TODO make it also return stats for win conditions
             obj = TeamStatsSelector(team_stats=query)
