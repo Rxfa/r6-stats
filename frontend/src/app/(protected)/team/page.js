@@ -1,5 +1,5 @@
 'use client'
-import {Center, Divider, Flex, Heading, HStack, Select, SimpleGrid, Stack} from "@chakra-ui/react";
+import {Box, Center, Divider, Flex, Heading, HStack, Select, SimpleGrid, Stack} from "@chakra-ui/react";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import GamesTable from "@/components/GamesTable";
 import PlayersTable from "@/components/PlayersTable";
@@ -133,24 +133,34 @@ export default function Page(){
                     </Flex>
                     <Divider/>
                     <SimpleGrid columns={3} spacing={5}>
-                        <TwoBarChart
-                            xAxisKey={"site"}
-                            dataKey={"plays"}
-                            secondDataKey={"wins"}
-                            data={teamStats[selectedMap]?.team.general.sites}
-                        />
-                        <TwoBarChart
-                            xAxisKey={"site"}
-                            dataKey={"plays"}
-                            secondDataKey={"wins"}
-                            data={teamStats[selectedMap]?.team.atk.sites}
-                        />
-                        <TwoBarChart
-                            xAxisKey={"site"}
-                            dataKey={"plays"}
-                            secondDataKey={"wins"}
-                            data={teamStats[selectedMap]?.team.def.sites}
-                        />
+                        <Stack>
+                            <Heading alignSelf={"center"}>General</Heading>
+                            <TwoBarChart
+                                xAxisKey={"site"}
+                                dataKey={"plays"}
+                                secondDataKey={"wins"}
+                                data={teamStats[selectedMap]?.team.general.sites}
+                            />
+                        </Stack>
+                        <Stack>
+                            <Heading alignSelf={"center"}>ATK</Heading>
+                            <TwoBarChart
+                                xAxisKey={"site"}
+                                dataKey={"plays"}
+                                secondDataKey={"wins"}
+                                data={teamStats[selectedMap]?.team.atk.sites}
+                            />
+                        </Stack>
+                        <Stack>
+                            <Heading alignSelf={"center"}>DEF</Heading>
+                            <TwoBarChart
+
+                                xAxisKey={"site"}
+                                dataKey={"plays"}
+                                secondDataKey={"wins"}
+                                data={teamStats[selectedMap]?.team.def.sites}
+                            />
+                        </Stack>
                     </SimpleGrid>
                 </Flex>
             </Stack>

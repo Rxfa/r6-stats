@@ -98,9 +98,6 @@ export default function Page(){
                     </HStack>
                 </Flex>
                 <GamesTable games={shownData}/>
-                <Stack direction={"column-reverse"}>
-                    <Stack>1-10 of 50</Stack>
-                </Stack>
             </Flex>
         </Center>
     )

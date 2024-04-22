@@ -1,10 +1,12 @@
 'use client'
-import {Center, Flex, Heading, HStack, Select, Stack} from "@chakra-ui/react";
+import {Center, Divider, Flex, Heading, HStack, Select, SimpleGrid, Stack} from "@chakra-ui/react";
 import {ChevronDownIcon} from "@chakra-ui/icons";
-import GamesTable from "@/components/GamesTable";
 import PlayersTable from "@/components/PlayersTable";
 import {useEffect, useState} from "react";
 import {getRounds} from "@/app/api/getRounds";
+import TwoBarChart from "@/components/charts/TwoBarsChart";
+import SimpleScatterChart from "@/components/charts/SimpleScatterChart";
+import SimpleBarChart from "@/components/charts/SimpleBarChart";
 
 export default function Page(){
     const [data, setData] = useState([])
@@ -53,8 +55,125 @@ export default function Page(){
                     </HStack>
                 </Flex>
                 <PlayersTable data={playerStats}/>
-                <Stack direction={"column-reverse"}>
-                    <Stack>1-10 of 50</Stack>
+                <Stack mt={12} spacing={12}>
+                    <>
+                        <Heading alignSelf={"center"}>Openings</Heading>
+                        <Divider my={6}/>
+                        <SimpleGrid columns={3} spacingY={12}>
+                            <Stack>
+                                <Heading alignSelf={"center"}>General</Heading>
+                                <TwoBarChart
+                                    xAxisKey={"name"}
+                                    dataKey={"opening_kills"}
+                                    secondDataKey={"opening_deaths"}
+                                    data={data?.player_stats?.general}
+                                />
+                            </Stack>
+                            <Stack>
+                                <Heading alignSelf={"center"}>ATK</Heading>
+                                <TwoBarChart
+                                    xAxisKey={"name"}
+                                    dataKey={"opening_kills"}
+                                    secondDataKey={"opening_deaths"}
+                                    data={data?.player_stats?.atk}
+                                />
+                            </Stack>
+                            <Stack>
+                                <Heading alignSelf={"center"}>DEF</Heading>
+                                <TwoBarChart
+                                    xAxisKey={"name"}
+                                    dataKey={"opening_kills"}
+                                    secondDataKey={"opening_deaths"}
+                                    data={data?.player_stats?.def}
+                                />
+                            </Stack>
+                        </SimpleGrid>
+                    </>
+                    <>
+                        <Heading alignSelf={"center"}>Entries</Heading>
+                        <Divider my={6}/>
+                        <SimpleGrid columns={3} spacingY={12}>
+                            <Stack>
+                                <Heading alignSelf={"center"}>General</Heading>
+                                <TwoBarChart
+                                    xAxisKey={"name"}
+                                    dataKey={"entry_kills"}
+                                    secondDataKey={"entry_deaths"}
+                                    data={data?.player_stats?.general}
+                                />
+                            </Stack>
+                            <Stack>
+                                <Heading alignSelf={"center"}>ATK</Heading>
+                                <TwoBarChart
+                                    xAxisKey={"name"}
+                                    dataKey={"entry_kills"}
+                                    secondDataKey={"entry_deaths"}
+                                    data={data?.player_stats?.atk}
+                                />
+                            </Stack>
+                            <Stack>
+                                <Heading alignSelf={"center"}>DEF</Heading>
+                                <TwoBarChart
+                                    xAxisKey={"name"}
+                                    dataKey={"entry_kills"}
+                                    secondDataKey={"entry_deaths"}
+                                    data={data?.player_stats?.def}
+                                />
+                            </Stack>
+                        </SimpleGrid>
+                    </>
+                    <>
+                        <Heading alignSelf={"center"}>KPR</Heading>
+                        <Divider my={6}/>
+                        <SimpleGrid columns={3} spacingY={12}>
+                            <Stack>
+                                <Heading alignSelf={"center"}>General</Heading>
+                                <SimpleBarChart
+                                    data={data?.player_stats?.general}
+                                    dataKey={"kpr"}
+                                    xAxisKey={"name"}
+                                />
+                            </Stack>
+                            <Stack>
+                                <Heading alignSelf={"center"}>ATK</Heading>
+                                <SimpleBarChart
+                                    data={data?.player_stats?.atk}
+                                    dataKey={"kpr"}
+                                    xAxisKey={"name"}
+                                />
+                            </Stack>
+                            <Stack>
+                                <Heading alignSelf={"center"}>DEF</Heading>
+                                <SimpleBarChart
+                                    data={data?.player_stats?.def}
+                                    dataKey={"kpr"}
+                                    xAxisKey={"name"}
+                                />
+                            </Stack>
+                        </SimpleGrid>
+                    </>
+                    <>
+                        <Heading alignSelf={"center"}>Objective Plays</Heading>
+                        <Divider my={6}/>
+                        <SimpleGrid columns={2} spacingY={12}>
+                            <Stack mx={"auto"} gap={6}>
+                                <Heading alignSelf={"center"}>PLANTS</Heading>
+                                <SimpleBarChart
+                                    data={data?.player_stats?.general}
+                                    dataKey={"plants"}
+                                    xAxisKey={"name"}
+                                />
+                            </Stack>
+                            <Stack mx={"auto"} gap={6}>
+                                <Heading alignSelf={"center"}>DISABLES</Heading>
+                                <SimpleBarChart
+                                    data={data?.player_stats?.general}
+                                    dataKey={"disables"}
+                                    xAxisKey={"name"}
+                                />
+                            </Stack>
+                        </SimpleGrid>
+                    </>
                 </Stack>
             </Flex>
         </Center>
