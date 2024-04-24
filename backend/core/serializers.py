@@ -105,7 +105,7 @@ class BansSerializer(serializers.Serializer):
 class SiteSerializer(serializers.Serializer):
     site = serializers.CharField(max_length=50, read_only=True)
     plays = serializers.IntegerField(read_only=True)
-    wins = serializers.IntegerField(read_only=True, min_value=plays)
+    wins = serializers.IntegerField(read_only=True, max_value=plays)
 
 
 class TeamStatsSerializer(serializers.Serializer):

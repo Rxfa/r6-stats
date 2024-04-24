@@ -14,7 +14,7 @@
 <div align="center">
 
   <h3 align="center">R6 Stats</h3>
-
+  ![Demo gif](./public/r6statsDemo.gif)
   <p align="center">
     An awesome web app made with Django and React!
     <br />
@@ -185,4 +185,4 @@ Project Link: [https://github.com/Rxfa/r6-stats](https://github.com/Rxfa/r6-stat
 [Chakra-ui]: https://img.shields.io/badge/chakra-%234ED1C5.svg?style=for-the-badge&logo=chakraui&logoColor=white
 [Chakra-ui-url]: https://chakra-ui.com/
 [Next.js]: https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=next.js&logoColor=white
-[Nextjs-url]: https://nextjs.org/
+[Nextjs-url]: https://nextjs.org/ 

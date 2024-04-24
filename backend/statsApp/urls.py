@@ -25,8 +25,8 @@ router.register(r'games', views.GameViewSet, basename='games')
 router.register(r'rounds', views.RoundViewSet, basename='rounds')
 
 urlpatterns = [
-    path('api/', include("djoser.urls")),
-    path('api/', include('djoser.urls.authtoken')),
+    path('auth/', include("djoser.urls")),
+    path('auth/', include('djoser.urls.authtoken')),
 ]
 
 urlpatterns += router.urls

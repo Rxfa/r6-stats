@@ -33,6 +33,7 @@ class Round:
         self.own_bans: str | None = None  # Not possible to get as of August 18th 2023
         self.opp_bans: str | None = None  # Not possible to get as of August 18th 2023
 
+
 class Team:
     def __init__(self, round_data, num):
         self.own_team: bool = (num == 0)

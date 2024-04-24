@@ -28,7 +28,7 @@ class RoundReplayService:
 
 def r6_dissect(file):
     cmd = subprocess.run(
-        ["core/scripts/r6-dissect/r6-dissect", file, "-x", "stdout"],
+        ["core/scripts/r6-dissect/r6-dissect", file],
         capture_output=True,
         text=True
     )
