@@ -1,10 +1,20 @@
-import {Bar, BarChart, CartesianGrid, Legend, Rectangle, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Legend,
+    Rectangle,
+    ResponsiveContainer,
+    Tooltip,
+    XAxis,
+    YAxis
+} from "recharts";
 
 export default function TwoBarChart({data, dataKey, secondDataKey, xAxisKey}){
     return(
         <ResponsiveContainer
-            width={600}
-            height={400}
+            width="100%"
+            height={300}
             margin={{
                 top: 5,
                 right: 30,
@@ -12,21 +22,22 @@ export default function TwoBarChart({data, dataKey, secondDataKey, xAxisKey}){
                 bottom: 5,
             }}
         >
-            <BarChart width={150} height={40} data={data}>
-                <CartesianGrid strokeDasharray="10 10" />
-                <XAxis dataKey={xAxisKey} />
-                <YAxis />
+            <BarChart data={data}>
+                <CartesianGrid strokeDasharray="5 5" />
+                <XAxis
+                    dataKey={xAxisKey}
+                    interval={0}
+                />
+                <YAxis allowDecimals={false}/>
                 <Tooltip />
-                <Legend />
+                <Legend verticalAlign="top"/>
                 <Bar
                     dataKey={dataKey}
                     fill="#8884d8"
-                    activeBar={<Rectangle fill="#3B36A9" />}
                 />
                 <Bar
                     dataKey={secondDataKey}
                     fill="#82ca9d"
-                    activeBar={<Rectangle fill="#398556" />}
                 />
             </BarChart>
         </ResponsiveContainer>
