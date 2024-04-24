@@ -15,7 +15,7 @@
 
   <h3 align="center">R6 Stats</h3>
 
-  ![r6statsDemo](https://github.com/Rxfa/r6-stats/assets/65974055/c6986743-1a47-458d-b2c6-4e99c1744042)
+  ![r6statsDemo](https://github.com/Rxfa/r6-stats/assets/65974055/3f9f7b19-f6d5-4bed-b5ae-3b7b2688f616)
 
   
   <p align="center">
