@@ -14,7 +14,10 @@
 <div align="center">
 
   <h3 align="center">R6 Stats</h3>
-  ![Demo gif](https://github.com/Rxfa/r6-stats/blob/main/public/r6statsDemo.gif)
+
+  ![r6statsDemo](https://github.com/Rxfa/r6-stats/assets/65974055/c6986743-1a47-458d-b2c6-4e99c1744042)
+
+  
   <p align="center">
     An awesome web app made with Django and React!
     <br />
