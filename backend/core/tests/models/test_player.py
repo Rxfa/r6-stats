@@ -5,6 +5,15 @@ from core.factories import PlayerFactory
 
 class PlayerTests(TestCase):
 
+    def test_player_is_valid(self):
+        player = PlayerFactory()
+        player.full_clean()
+
+    def test_player_cannot_have_more_than_five_kills(self):
+        player = PlayerFactory(kills=6)
+        with self.assertRaises(ValidationError):
+            player.full_clean()
+
     def test_player_cannot_have_more_kills_than_assists(self):
         player = PlayerFactory(assists=1, kills=0)
         with self.assertRaises(ValidationError):
@@ -67,5 +76,15 @@ class PlayerTests(TestCase):
 
     def test_player_gets_traded_and_does_not_have_deaths(self):
         player = PlayerFactory(traded=True, died=False)
+        with self.assertRaises(ValidationError):
+            player.full_clean()
+
+    def test_player_cannot_have_KOST_without_kills_planting_disabling_or_trading(self):
+        player = PlayerFactory(kost=True, kills=0, planted=False, disabled=False, traded=False)
+        with self.assertRaises(ValidationError):
+            player.full_clean()
+
+    def test_player_cannot_have_multikill_with_less_than_two_kills(self):
+        player = PlayerFactory(multikill=True, kills=1)
         with self.assertRaises(ValidationError):
             player.full_clean()

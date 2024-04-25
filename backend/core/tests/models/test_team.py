@@ -6,7 +6,11 @@ from core.factories import TeamFactory, RoundFactory
 
 class TeamTests(TestCase):
 
-    def test_team_cant_be_own_twice_in_the_same_round(self):
+    def test_team_is_valid(self):
+        team = TeamFactory()
+        team.full_clean()
+
+    def test_team_cannot_be_own_twice_in_the_same_round(self):
         round = RoundFactory()
         team = TeamFactory(is_own=True, round=round)
         team.full_clean()
@@ -19,7 +23,7 @@ class TeamTests(TestCase):
         with self.assertRaises(ValidationError):
             team.full_clean()
 
-    def test_team_didnt_win_and_win_condition_not_null(self):
+    def test_team_did_not_win_and_win_condition_not_null(self):
         team = TeamFactory(won=False, win_condition="Time")
         with self.assertRaises(ValidationError):
             team.full_clean()

@@ -91,8 +91,10 @@ class Player(models.Model):
     multikill = models.BooleanField()
 
     def clean(self):
-        if self.assists > self.kills:
-            raise ValidationError(_("The number of assists cannot be higher than the number of kills"))
+        if self.kills > 5:
+            raise ValidationError(_("The number of kills cannot be higher than 5"))
+        if self.assists > (5 - self.kills):
+            raise ValidationError(_("The number of assists cannot be higher than 5 minus the number of kills"))
         if self.headshots > self.kills:
             raise ValidationError(_("The number of headshots cannot be higher than the number of kills"))
         if self.planted and self.disabled:
@@ -119,3 +121,7 @@ class Player(models.Model):
             raise ValidationError(_("Player cannot refrag and have no kills"))
         if self.traded and not self.died:
             raise ValidationError(_("Player cannot be traded and not die"))
+        if self.kost and not (self.kills > 0 or self.planted or self.disabled or self.traded):
+            raise ValidationError(_("Player cannot have KOST without kills, planting, disabling or being traded"))
+        if self.multikill and self.kills <= 1:
+            raise ValidationError(_("Player cannot have multikill with less than 2 kills"))
