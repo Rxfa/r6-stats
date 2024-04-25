@@ -1,25 +1,6 @@
-from datetime import timedelta
-
-from django.db import IntegrityError
-from faker import Faker
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-from .factories import TeamFactory, PlayerFactory, RoundFactory
-
-faker = Faker()
-
-
-class RoundTests(TestCase):
-    def setUp(self):
-        self.match_id = faker.name()
-        self.number = faker.pyint(min_value=0)
-
-    def test_match_id_cant_be_same_as_number_more_than_once(self):
-        round = RoundFactory(match_id=self.match_id, number=self.number)
-        round.full_clean()
-        with self.assertRaises(IntegrityError):
-            round2 = RoundFactory(match_id=self.match_id, number=self.number)
-            round2.full_clean()
+from core.factories import PlayerFactory
 
 
 class PlayerTests(TestCase):
@@ -63,24 +44,3 @@ class PlayerTests(TestCase):
         player = PlayerFactory(traded=True, died=False)
         with self.assertRaises(ValidationError):
             player.full_clean()
-
-
-class TeamTests(TestCase):
-
-    def test_team_cant_be_own_twice_in_the_same_round(self):
-        round = RoundFactory()
-        team = TeamFactory(is_own=True, round=round)
-        team.full_clean()
-        with self.assertRaises(IntegrityError):
-            team2 = TeamFactory(is_own=True, round=round)
-            team2.full_clean()
-
-    def test_team_won_and_win_condition_is_null(self):
-        team = TeamFactory(won=True, win_condition=None)
-        with self.assertRaises(ValidationError):
-            team.full_clean()
-
-    def test_team_didnt_win_and_win_condition_not_null(self):
-        team = TeamFactory(won=False, win_condition="Time")
-        with self.assertRaises(ValidationError):
-            team.full_clean()

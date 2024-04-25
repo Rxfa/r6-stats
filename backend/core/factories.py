@@ -87,3 +87,5 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     time_of_plant = faker.pyint(min_value=0, max_value=180)
     disabled = faker.pybool()
     time_of_disable = faker.pyint(min_value=0, max_value=180)
+    kost = faker.pybool()
+    multikill = faker.pybool()
