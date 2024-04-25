@@ -64,7 +64,7 @@ class Team(models.Model):
         if self.won and self.win_condition is None:
             raise ValidationError(_("If won, there has to be a win condition"))
         if not self.won and self.win_condition is not None:
-            raise ValidationError(_("If not won, there can be no win condition"))
+            raise ValidationError(_("If lost, there can be no win condition"))
 
 
 class Player(models.Model):
@@ -97,24 +97,24 @@ class Player(models.Model):
             raise ValidationError(_("The number of headshots cannot be higher than the number of kills"))
         if self.planted and self.disabled:
             raise ValidationError(_("Player cannot plant and defuse in the same round"))
-        if (self.opening_kill and not self.entry_kill) or (self.opening_death and not self.entry_death):
-            raise ValidationError(_("Player has opening but no entry"))
+        if self.opening_kill and not self.entry_kill:
+            raise ValidationError(_("Player has opening kill but no entry"))
+        if self.opening_death and not self.entry_death:
+            raise ValidationError(_("Player has opening death but no entry"))
         if self.entry_kill and self.kills == 0:
             raise ValidationError(_("Player has entry kill but no kills"))
         if self.entry_death and not self.died:
             raise ValidationError(_("Player has entry death and no deaths"))
-        if (
-                (self.planted and self.time_of_plant is None) or
-                (self.disabled and self.time_of_plant is None)
-        ):
-            raise ValidationError(_("Time of objective play cannot be null if objective play was made"))
-        if (
-                (not self.planted and self.time_of_plant is not None) or
-                (not self.disabled and self.time_of_plant is not None)
-        ):
-            raise ValidationError(_("Time of objective play has to be null if no objective play was made"))
-        if self.time_of_plant > 180 or self.time_of_disable > 180:
-            raise ValidationError(_("Invalid time for objective play"))
+        if self.time_of_plant is None and self.planted:
+            raise ValidationError(_("Time of plant cannot be null if plant was made"))
+        if self.time_of_disable is None and self.disabled:
+            raise ValidationError(_("Time of disable cannot be null if disable was made"))
+        if self.time_of_plant is not None and not self.planted:
+            raise ValidationError(_("Time of plant has to be null if no plant was made"))
+        if self.time_of_plant is not None and self.time_of_plant > 180:
+            raise ValidationError(_("Invalid time for plant"))
+        if self.time_of_disable is not None and self.time_of_disable > 180:
+            raise ValidationError(_("Invalid time for disable"))
         if self.refragged and self.kills == 0:
             raise ValidationError(_("Player cannot refrag and have no kills"))
         if self.traded and not self.died:

@@ -1,8 +1,7 @@
-from django.db import IntegrityError
-from faker import Faker
-from django.test import TestCase
 from django.core.exceptions import ValidationError
-from core.factories import TeamFactory, PlayerFactory, RoundFactory
+from django.db import IntegrityError
+from django.test import TestCase
+from core.factories import TeamFactory, RoundFactory
 
 
 class TeamTests(TestCase):

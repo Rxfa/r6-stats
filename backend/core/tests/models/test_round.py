@@ -1,8 +1,7 @@
 from django.db import IntegrityError
-from faker import Faker
 from django.test import TestCase
-from django.core.exceptions import ValidationError
-from core.factories import TeamFactory, PlayerFactory, RoundFactory
+from faker import Faker
+from core.factories import RoundFactory
 
 faker = Faker()
 
