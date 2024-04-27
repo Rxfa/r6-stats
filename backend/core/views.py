@@ -11,7 +11,7 @@ from .selectors import (
     list_games_by_map,
     retrieve_game,
     replay_list_queryset,
-    replay_exists, list_rounds
+    replay_exists, list_rounds, game_exists
 )
 from .serializers import (RoundListUploadSerializer, ReplaySerializer, GameSerializer,
                           RoundListSerializer)
@@ -35,17 +35,25 @@ class GameViewSet(viewsets.ViewSet):
         return Response(serialized_data, status=status.HTTP_200_OK)
 
     def retrieve(self, request, *args, **kwargs):
-        queryset = retrieve_game(self.request.user, self.kwargs['match_id'])
-        serializer = GameSerializer(queryset, many=False)
-        serialized_data = serializer.data
-        return Response(serialized_data, status=status.HTTP_200_OK)
+        match_id = self.kwargs['match_id']
+        user = self.request.user
+        if game_exists(user, match_id):
+            queryset = retrieve_game(user, match_id)
+            serializer = GameSerializer(queryset, many=False)
+            serialized_data = serializer.data
+            return Response(serialized_data, status=status.HTTP_200_OK)
+        return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
 
     def destroy(self, request, *args, **kwargs):
-        try:
-            GameService(self.request.user, self.kwargs["match_id"]).destroy()
-            return Response("Game deleted successfully", status=status.HTTP_200_OK)
-        except:
-            return Response({"error": "Replay could not be deleted"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        uuid = self.kwargs["match_id"]
+        user = self.request.user
+        if game_exists(user, uuid):
+            try:
+                GameService(user, uuid).destroy()
+                return Response("Game deleted successfully", status=status.HTTP_200_OK)
+            except:
+                return Response({"error": "Replay could not be deleted"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class RoundViewSet(viewsets.ViewSet):
