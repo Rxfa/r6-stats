@@ -54,6 +54,7 @@ class RoundsSelector:
             )
         }
 
+
 class BansSelector:
     def __init__(self, is_own, ATK, DEF):
         self.is_own: bool = is_own
@@ -174,8 +175,8 @@ class RoundSelector:
         team = Team.objects.filter(round=round, is_own=True).first()
         self.number = round.number
         self.score = ScoreSelector(round)
-        self.won = team.won
-        self.win_condition = team.win_condition
+        self.won = team.won if team else None
+        self.win_condition = team.win_condition if team else None
         self.timestamp = round.timestamp
         self.site = round.site
         self.players = [PlayerRoundStatsSelector(player) for player in Player.objects.filter(team=team)]
@@ -246,3 +247,7 @@ def replay_destroy_queryset(fetched_by: User, id: uuid.UUID) -> QuerySet:
 
 def round_list_queryset(fetched_by: User) -> QuerySet:
     return Round.objects.filter(replay__replay__uploaded_by=fetched_by)
+
+
+def game_exists(fetched_by: User, match_id: uuid) -> bool:
+    return Round.objects.filter(replay__replay__uploaded_by=fetched_by, match_id=str(match_id)).exists()

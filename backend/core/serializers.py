@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
 from rest_framework import serializers
-from .models import Round, Team, Player, RoundReplay, Replay
+
+from .models import RoundReplay, Replay
 
 
 class ScoreSerializer(serializers.Serializer):
