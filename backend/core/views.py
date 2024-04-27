@@ -6,8 +6,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from .serializers import (RoundListUploadSerializer, RoundSerializer, ReplaySerializer, GameSerializer,
                           RoundListSerializer)
-from .services.ReplayService import ReplayService, GameService
-from .services.RoundReplayService import RoundReplayService
+from .services.replays import ReplayService, GameService
+from .services.round_replays import RoundReplayService
 from .models import Round, RoundReplay
 from django_filters.rest_framework import DjangoFilterBackend
 from .selectors import (
