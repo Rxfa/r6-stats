@@ -1,15 +1,15 @@
 import uuid
 
-from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.db import models
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import FileExtensionValidator
 
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_pic = models.ImageField(upload_to='profile_pics')
+
 
 class Replay(models.Model):
     uuid = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -21,6 +21,7 @@ class RoundReplay(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     replay = models.ForeignKey(Replay, on_delete=models.CASCADE, related_name='round_replays')
     file = models.FileField(upload_to="replays")
+
 
 class Round(models.Model):
     replay = models.OneToOneField(RoundReplay, on_delete=models.CASCADE, primary_key=True)

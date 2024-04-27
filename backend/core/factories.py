@@ -75,7 +75,7 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     operator = faker.name()
     opening_kill = faker.pybool()
     entry_kill = True if opening_kill else faker.pybool()
-    kills = faker.pyint(min_value=0, max_value=5)
+    kills = faker.pyint(min_value=1, max_value=5) if entry_kill else faker.pyint(min_value=0, max_value=5)
     assists = faker.pyint(min_value=0, max_value=(5-kills))
     headshots = faker.pyint(min_value=0, max_value=kills)
     opening_death = faker.pybool()

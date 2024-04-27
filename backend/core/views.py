@@ -1,24 +1,22 @@
 from django.db import IntegrityError
-from rest_framework import status, viewsets
 from rest_framework import mixins
+from rest_framework import status, viewsets
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .serializers import (RoundListUploadSerializer, RoundSerializer, ReplaySerializer, GameSerializer,
-                          RoundListSerializer)
-from .services.replays import ReplayService, GameService
-from .services.round_replays import RoundReplayService
-from .models import Round, RoundReplay
-from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.response import Response
+
+from .models import RoundReplay
 from .selectors import (
     list_games,
     list_games_by_map,
     retrieve_game,
-    rounds_retrieve,
-    round_list_queryset,
     replay_list_queryset,
     replay_exists, list_rounds
 )
+from .serializers import (RoundListUploadSerializer, ReplaySerializer, GameSerializer,
+                          RoundListSerializer)
+from .services.replays import ReplayService, GameService
+from .services.round_replays import RoundReplayService
 
 
 class GameViewSet(viewsets.ViewSet):
