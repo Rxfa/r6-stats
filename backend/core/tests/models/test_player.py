@@ -14,8 +14,8 @@ class PlayerTests(TestCase):
         with self.assertRaises(ValidationError):
             player.full_clean()
 
-    def test_player_cannot_have_more_kills_than_assists(self):
-        player = PlayerFactory(assists=1, kills=0)
+    def test_player_cannot_have_more_assists_than_5_less_kills(self):
+        player = PlayerFactory(assists=3, kills=3)
         with self.assertRaises(ValidationError):
             player.full_clean()
 
