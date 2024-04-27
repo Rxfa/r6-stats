@@ -85,7 +85,7 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     traded = faker.pybool() if died else False
     planted = faker.pybool()
     time_of_plant = faker.pyint(min_value=0, max_value=180) if planted else None
-    disabled = faker.pybool()
+    disabled = False if planted else faker.pybool()
     time_of_disable = faker.pyint(min_value=0, max_value=180) if disabled else None
     kost = True if (kills > 0 or planted or disabled or traded) else False
     multikill = True if kills > 1 else False
