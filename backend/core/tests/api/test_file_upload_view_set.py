@@ -1,18 +1,19 @@
 import uuid
 
-from rest_framework.test import APITestCase
 from rest_framework import status
-from django.urls import reverse
-from django.contrib.auth.models import User
-from core.models import RoundReplay, Replay
+from rest_framework.test import APITestCase
+
+from core.factories import ReplayFactory, UserFactory
+from core.models import Replay
 
 
 class FileUploadViewSetTests(APITestCase):
-    url = "http://localhost:8000/replays/"
-    replay_path = "core/tests/services/testFiles/Match-2023-03-13_20-38-04-22/Match-2023-03-13_20-38-04-22-R01.rec"
-
     def setUp(self):
-        self.user = User.objects.create_user(username='testuser', password='testpassword')
+        self.user = UserFactory()
+        self.url = "http://localhost:8000/replays/"
+        self.replay_path = (
+            "core/tests/services/testFiles/Match-2023-03-13_20-38-04-22/Match-2023-03-13_20-38-04-22-R01.rec"
+        )
         self.client.force_authenticate(user=self.user)
 
     def test_list_replays(self):
@@ -48,10 +49,7 @@ class FileUploadViewSetTests(APITestCase):
 
     def test_destroy_replay(self):
         # Create a replay before attempting to delete it
-        with open(self.replay_path, 'rb') as file:
-            data = {'rounds': [file]}
-            self.client.post(self.url, data, format='multipart')
-
+        ReplayFactory(uploaded_by=self.user)
         url = f"{self.url}{Replay.objects.first().uuid}/"
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
