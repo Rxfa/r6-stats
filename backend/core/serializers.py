@@ -1,7 +1,7 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 
-from .models import RoundReplay, Replay
+from .models import RoundReplay, Replay, Vod
 
 
 class ScoreSerializer(serializers.Serializer):
@@ -133,3 +133,9 @@ class RoundListSerializer(serializers.Serializer):
     wins = serializers.IntegerField(min_value=0, max_value=plays)
     player_stats = serializers.DictField(child=PlayerStatsSerializer(many=True))
     maps = serializers.DictField(child=StatsSerializer())
+
+
+class VodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vod
+        fields = ("url", "notes", "against",)

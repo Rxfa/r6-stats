@@ -5,18 +5,23 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .models import RoundReplay
-from .selectors import (
+from core.models import RoundReplay, Vod
+from core.selectors import (
     list_games,
     list_games_by_map,
     retrieve_game,
     replay_list_queryset,
-    replay_exists, list_rounds, game_exists
+    replay_exists, list_rounds, game_exists, vod_exists, list_vods
 )
-from .serializers import (RoundListUploadSerializer, ReplaySerializer, GameSerializer,
-                          RoundListSerializer)
-from .services.replays import ReplayService, GameService
-from .services.round_replays import RoundReplayService
+from core.serializers import (
+    RoundListUploadSerializer,
+    ReplaySerializer,
+    GameSerializer,
+    RoundListSerializer, VodSerializer
+)
+from core.services.replays import ReplayService, GameService
+from core.services.round_replays import RoundReplayService
+from core.services.vods import VodService
 
 
 class GameViewSet(viewsets.ViewSet):
@@ -66,6 +71,65 @@ class RoundViewSet(viewsets.ViewSet):
         serializer = RoundListSerializer(queryset)
         serialized_data = serializer.data
         return Response(serialized_data, status=status.HTTP_200_OK)
+
+
+class VodViewSet(
+    viewsets.GenericViewSet,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin
+):
+    queryset = Vod.objects.all()
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
+    permission_classes = [IsAuthenticated]
+    lookup_field = "id"
+
+    def list(self, request, *args, **kwargs):
+        queryset = list_vods(self.request.user)
+        serializer = VodSerializer(queryset, many=True)
+        serialized_data = serializer.data
+        return Response(serialized_data, status=status.HTTP_200_OK)
+
+    def create(self, request, *args, **kwargs):
+        serializer = VodSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                VodService(self.request.user).create(serializer.data)
+            except IntegrityError:
+                return Response({"error": "Vod already exists"}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as e:
+                return Response(
+                    {"error": "Failed to save files", "description": str(e)},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            return Response({"message": "Vod uploaded successfully"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def update(self, request, *args, **kwargs):
+        id = kwargs.get("id")
+        user = self.request.user
+        if vod_exists(user, id):
+            serializer = VodSerializer(data=request.data)
+            if serializer.is_valid():
+                try:
+                    VodService(user).update(id, serializer.data)
+                    return Response("Vod updated successfully", status=status.HTTP_200_OK)
+                except:
+                    return Response({"error": "Vod could not be updated"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Vod not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    def destroy(self, request, *args, **kwargs):
+        id = kwargs.get("id")
+        user = self.request.user
+        if vod_exists(user, id):
+            try:
+                VodService(user).destroy(id)
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            except:
+                return Response({"error": "Vod could not be deleted"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": "Vod not found"}, status=status.HTTP_404_NOT_FOUND)
 
 
 class FileUploadViewSet(
