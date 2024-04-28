@@ -2,6 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
 from core.factories import TeamFactory, RoundFactory
+from core.models import Team
 
 
 class TeamTests(TestCase):
@@ -9,6 +10,7 @@ class TeamTests(TestCase):
     def test_team_is_valid(self):
         team = TeamFactory()
         team.full_clean()
+        self.assertEqual(Team.objects.count(), 1)
 
     def test_team_cannot_be_own_twice_in_the_same_round(self):
         round = RoundFactory()
