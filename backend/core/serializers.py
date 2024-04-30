@@ -139,3 +139,9 @@ class VodSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vod
         fields = ("url", "notes", "against",)
+
+
+class VodListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vod
+        fields = "__all__"

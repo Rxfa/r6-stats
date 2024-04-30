@@ -16,7 +16,7 @@ import {useRouter} from "next/navigation";
 import {AddIcon, ChevronDownIcon} from "@chakra-ui/icons";
 import AddVOD from "@/components/AddVOD";
 import AddGame from "@/components/AddGame";
-import {logout} from "@/app/api/logout";
+import { logout } from "@/app/api/auth";
 import {useEffect, useState} from "react";
 
 export default function Navbar(){

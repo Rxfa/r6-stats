@@ -17,7 +17,7 @@ from core.serializers import (
     RoundListUploadSerializer,
     ReplaySerializer,
     GameSerializer,
-    RoundListSerializer, VodSerializer
+    RoundListSerializer, VodSerializer, VodListSerializer
 )
 from core.services.replays import ReplayService, GameService
 from core.services.round_replays import RoundReplayService
@@ -87,7 +87,7 @@ class VodViewSet(
 
     def list(self, request, *args, **kwargs):
         queryset = list_vods(self.request.user)
-        serializer = VodSerializer(queryset, many=True)
+        serializer = VodListSerializer(queryset, many=True)
         serialized_data = serializer.data
         return Response(serialized_data, status=status.HTTP_200_OK)
 

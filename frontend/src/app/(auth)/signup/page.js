@@ -22,7 +22,7 @@ import {
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import {useRouter} from "next/navigation";
 
-import {signup} from "@/app/api/signup";
+import { signup } from "@/app/api/auth";
 axios.defaults.baseURL = 'http://localhost:8000';
 
 export default function Page(props){

@@ -7,10 +7,8 @@ import {
 } from "@chakra-ui/react";
 import GamesTable from "@/components/GamesTable";
 import {ChevronDownIcon} from "@chakra-ui/icons";
-import {games} from "@/app/lib/games-placeholder";
 import {useEffect, useState} from "react";
-import SimpleBarChart from "@/components/charts/SimpleBarChart";
-import {getGames} from "@/app/api/getGames";
+import { getGames } from "@/app/api/games";
 
 export default function Page(){
     const [data, setData] = useState([])

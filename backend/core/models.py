@@ -129,6 +129,7 @@ class Player(models.Model):
 
 
 class Vod(models.Model):
+    upload_date = models.DateTimeField(auto_now_add=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     against = models.CharField(max_length=50)
     notes = models.TextField(blank=True, null=True)

@@ -1,7 +1,7 @@
 import {Table, TableCaption, TableContainer, Tbody, Td, Tfoot, Th, Thead, Tr, Link, IconButton} from "@chakra-ui/react";
 import {useRouter} from "next/navigation";
 import {ArrowForwardIcon, CloseIcon, ExternalLinkIcon} from "@chakra-ui/icons";
-import {deleteGame} from "@/app/api/deleteGame";
+import { deleteGame } from "@/app/api/games";
 
 export default function GamesTable({games}){
 

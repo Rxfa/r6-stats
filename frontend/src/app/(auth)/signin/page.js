@@ -21,7 +21,7 @@ import {
     useBoolean
 } from '@chakra-ui/react';
 
-import {signin} from "@/app/api/signin";
+import { signin } from "@/app/api/auth";
 
 export default function Page(props) {
     const toast = useToast()
