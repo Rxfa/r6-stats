@@ -3,7 +3,7 @@ import uuid
 from django.contrib.auth.models import User
 from django.db.models import QuerySet, Sum, Count, Q, When, Case
 
-from .models import Team, Player, Round, Replay
+from .models import Team, Player, Round, Replay, Vod
 
 
 def list_games(user):
@@ -251,3 +251,11 @@ def round_list_queryset(fetched_by: User) -> QuerySet:
 
 def game_exists(fetched_by: User, match_id: uuid) -> bool:
     return Round.objects.filter(replay__replay__uploaded_by=fetched_by, match_id=str(match_id)).exists()
+
+
+def vod_exists(fetched_by: User, id: uuid.UUID) -> bool:
+    return Vod.objects.filter(user=fetched_by, id=id).exists()
+
+
+def list_vods(fetched_by: User) -> QuerySet:
+    return Vod.objects.filter(user=fetched_by)

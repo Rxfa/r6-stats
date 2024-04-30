@@ -3,7 +3,7 @@ import {Center, Divider, Flex, Heading, HStack, Select, SimpleGrid, Stack} from 
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import PlayersTable from "@/components/PlayersTable";
 import {useEffect, useState} from "react";
-import {getRounds} from "@/app/api/getRounds";
+import { getRounds } from "@/app/api/rounds";
 import TwoBarChart from "@/components/charts/TwoBarsChart";
 import SimpleScatterChart from "@/components/charts/SimpleScatterChart";
 import SimpleBarChart from "@/components/charts/SimpleBarChart";

@@ -2,7 +2,7 @@ import factory
 from django.contrib.auth.models import User
 from faker import Faker
 
-from .models import Round, RoundReplay, Team, Player, Replay
+from .models import Round, RoundReplay, Team, Player, Replay, Vod
 
 faker = Faker()
 
@@ -76,7 +76,7 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     opening_kill = faker.pybool()
     entry_kill = True if opening_kill else faker.pybool()
     kills = faker.pyint(min_value=1, max_value=5) if entry_kill else faker.pyint(min_value=0, max_value=5)
-    assists = faker.pyint(min_value=0, max_value=(5-kills))
+    assists = faker.pyint(min_value=0, max_value=(5 - kills))
     headshots = faker.pyint(min_value=0, max_value=kills)
     opening_death = faker.pybool()
     entry_death = True if opening_death else faker.pybool()
@@ -89,3 +89,13 @@ class PlayerFactory(factory.django.DjangoModelFactory):
     time_of_disable = faker.pyint(min_value=0, max_value=180) if disabled else None
     kost = True if (kills > 0 or planted or disabled or traded) else False
     multikill = True if kills > 1 else False
+
+
+class VodFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Vod
+
+    user = factory.SubFactory(UserFactory)
+    against = faker.name()
+    url = faker.url()
+    notes = faker.text()

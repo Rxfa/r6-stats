@@ -2,7 +2,7 @@
 import {Center, Heading} from "@chakra-ui/react";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import {getGame} from "@/app/api/getGame";
+import { getGame } from "@/app/api/games";
 
 export default function Page(){
 

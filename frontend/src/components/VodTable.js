@@ -1,20 +1,24 @@
 import {
     IconButton, Link,
-    Menu,
-    MenuButton, MenuItem, MenuList,
     Table,
-    TableCaption,
     TableContainer,
     Tbody,
     Td,
-    Tfoot,
     Th,
     Thead,
-    Tr
+    Tr,
 } from "@chakra-ui/react";
-import {EditIcon, ExternalLinkIcon} from "@chakra-ui/icons";
+import {ExternalLinkIcon,} from "@chakra-ui/icons";
+import { deleteVod} from "@/app/api/vods";
+import { Button } from "@chakra-ui/react";
 
 export default function VodTable({vods}){
+    const handleVodDelete = (id) => {
+        deleteVod(id).then(() => {
+            
+        })
+    }
+
     return(
         <TableContainer>
             <Table size={"lg"}>
@@ -32,28 +36,14 @@ export default function VodTable({vods}){
                         vods.map(
                             (vod) => (
                                 <Tr key={vods.id}>
-                                    <Td>{new Date(vod.date).toLocaleDateString()}</Td>
+                                    <Td>{new Date(vod.upload_date).toLocaleDateString()}</Td>
                                     <Td>{vod.against}</Td>
                                     <Td>{vod.notes}</Td>
                                     <Td>
-                                        <Menu>
-                                            <MenuButton
-                                                as={IconButton}
-                                                aria-label={"Add"}
-                                                rounded={'full'}
-                                                cursor={'pointer'}
-                                                icon={<EditIcon/>}
-                                                isRound
-                                                variant={"solid"}
-                                            />
-                                            <MenuList>
-                                                <MenuItem>Edit</MenuItem>
-                                                <MenuItem>Delete</MenuItem>
-                                            </MenuList>
-                                        </Menu>
+                                        <Button onClick={() =>handleVodDelete(vod.id)} colorScheme={"red"}>Delete</Button>
                                     </Td>
                                     <Td>
-                                        <Link href={"#"} cursor={"pointer"} display={"contents"}>
+                                        <Link href={vod.url} cursor={"pointer"} display={"contents"}>
                                             <IconButton aria-label='Search database' icon={<ExternalLinkIcon />} />
                                         </Link>
                                     </Td>

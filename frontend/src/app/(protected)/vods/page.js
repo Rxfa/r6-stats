@@ -3,10 +3,18 @@ import {Center, Flex, Heading, HStack, Select, Stack} from "@chakra-ui/react";
 import {ChevronDownIcon} from "@chakra-ui/icons";
 import VodTable from "@/components/VodTable";
 import {vods} from "@/app/lib/vods-placeholder";
-import {useState} from "react";
+import {useEffect, useState} from "react";
+import { getVods } from "@/app/api/vods";
 
 export default function Page(){
-    const [data, setData] = useState(vods)
+    const [data, setData] = useState([])
+
+    useEffect(() => {
+        getVods().then(vods => {
+            setData(vods)
+        });
+    }, []);
+
     return(
         <Center my={8} width={"inherit"}>
             <Flex flexDirection={"column"} gap={12}>

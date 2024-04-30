@@ -126,3 +126,11 @@ class Player(models.Model):
             raise ValidationError(_("Player cannot have KOST without kills, planting, disabling or being traded"))
         if self.multikill and self.kills <= 1:
             raise ValidationError(_("Player cannot have multikill with less than 2 kills"))
+
+
+class Vod(models.Model):
+    upload_date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    against = models.CharField(max_length=50)
+    notes = models.TextField(blank=True, null=True)
+    url = models.URLField()

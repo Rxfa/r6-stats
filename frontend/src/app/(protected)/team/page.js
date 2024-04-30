@@ -4,7 +4,7 @@ import {ChevronDownIcon} from "@chakra-ui/icons";
 import GamesTable from "@/components/GamesTable";
 import PlayersTable from "@/components/PlayersTable";
 import {useEffect, useState} from "react";
-import {getRounds} from "@/app/api/getRounds";
+import { getRounds } from "@/app/api/rounds";
 import SimpleBarChart from "@/components/charts/SimpleBarChart";
 import TwoBarChart from "@/components/charts/TwoBarsChart";
 
