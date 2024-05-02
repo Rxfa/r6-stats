@@ -112,12 +112,25 @@ class TeamStatsSerializer(serializers.Serializer):
     sites = SiteSerializer(many=True, read_only=True)
 
 
+class IndividualStatsSerializer(serializers.Serializer):
+    individual = serializers.DictField(child=PlayerStatsSerializer(many=True))
+
+
 class StatsSerializer(serializers.Serializer):
     team = serializers.DictField(child=TeamStatsSerializer())
     individual = serializers.DictField(child=PlayerStatsSerializer(many=True))
 
 
-class GameSerializer(serializers.Serializer):
+class GameListSerializer(serializers.Serializer):
+    match_id = serializers.CharField(max_length=50)
+    won = serializers.BooleanField()
+    map = serializers.CharField(max_length=50)
+    date = serializers.DateTimeField()
+    score = ScoreSerializer()
+    bans = BansSerializer(many=True, read_only=True)
+
+
+class GameDetailSerializer(serializers.Serializer):
     match_id = serializers.CharField(max_length=50)
     won = serializers.BooleanField()
     map = serializers.CharField(max_length=50)
@@ -126,6 +139,11 @@ class GameSerializer(serializers.Serializer):
     bans = BansSerializer(many=True, read_only=True)
     stats = StatsSerializer()
     rounds = RoundSerializer(many=True, read_only=True)
+
+
+class IndividualSerializer(serializers.Serializer):
+    general = serializers.DictField(child=PlayerStatsSerializer(many=True))
+    maps = serializers.DictField(child=IndividualStatsSerializer())
 
 
 class RoundListSerializer(serializers.Serializer):

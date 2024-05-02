@@ -23,6 +23,7 @@ router = routers.DefaultRouter()
 router.register(r'replays', views.FileUploadViewSet)
 router.register(r'games', views.GameViewSet, basename='games')
 router.register(r'rounds', views.RoundViewSet, basename='rounds')
+router.register(r'individual', views.IndividualViewSet, basename='individual')
 router.register(r'vods', views.VodViewSet, basename='vods')
 
 urlpatterns = [

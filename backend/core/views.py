@@ -8,16 +8,15 @@ from rest_framework.response import Response
 from core.models import RoundReplay, Vod
 from core.selectors import (
     list_games,
-    list_games_by_map,
     retrieve_game,
     replay_list_queryset,
-    replay_exists, list_rounds, game_exists, vod_exists, list_vods
+    replay_exists, list_rounds, game_exists, vod_exists, list_vods, list_individual_stats
 )
 from core.serializers import (
     RoundListUploadSerializer,
     ReplaySerializer,
-    GameSerializer,
-    RoundListSerializer, VodSerializer, VodListSerializer
+    GameDetailSerializer,
+    RoundListSerializer, VodSerializer, VodListSerializer, GameListSerializer, IndividualSerializer
 )
 from core.services.replays import ReplayService, GameService
 from core.services.round_replays import RoundReplayService
@@ -29,13 +28,8 @@ class GameViewSet(viewsets.ViewSet):
     lookup_field = 'match_id'
 
     def list(self, request, *args, **kwargs):
-        map_query = self.request.query_params.get('map')
-        queryset = (
-            list_games_by_map(self.request.user, map_query)
-            if map_query is not None else
-            list_games(self.request.user)
-        )
-        serializer = GameSerializer(queryset, many=True)
+        queryset = list_games(self.request.user)
+        serializer = GameListSerializer(queryset, many=True)
         serialized_data = serializer.data
         return Response(serialized_data, status=status.HTTP_200_OK)
 
@@ -43,8 +37,8 @@ class GameViewSet(viewsets.ViewSet):
         match_id = self.kwargs['match_id']
         user = self.request.user
         if game_exists(user, match_id):
-            queryset = retrieve_game(user, match_id)
-            serializer = GameSerializer(queryset, many=False)
+            queryset = retrieve_game(match_id)
+            serializer = GameDetailSerializer(queryset, many=False)
             serialized_data = serializer.data
             return Response(serialized_data, status=status.HTTP_200_OK)
         return Response({"error": "Game not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -65,10 +59,18 @@ class RoundViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
-        map_query: bool = self.request.query_params.get("map") == "true"
-        result_query: str = self.request.query_params.get("won")
-        queryset = list_rounds(self.request.user, map_query, result_query)
+        queryset = list_rounds(self.request.user)
         serializer = RoundListSerializer(queryset)
+        serialized_data = serializer.data
+        return Response(serialized_data, status=status.HTTP_200_OK)
+
+
+class IndividualViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        queryset = list_individual_stats(self.request.user)
+        serializer = IndividualSerializer(queryset, many=False)
         serialized_data = serializer.data
         return Response(serialized_data, status=status.HTTP_200_OK)
 

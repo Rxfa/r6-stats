@@ -17,28 +17,57 @@ def list_games(user):
     ]
 
 
-def list_games_by_map(user, map):
-    return [
-        GameSelector(match_id) for match_id in
-        set(
-            Round.objects
-            .filter(replay__replay__uploaded_by=user, map=map)
-            .values_list("match_id", flat=True)
-        )
-    ]
-
-
-def retrieve_game(user, match_id):
+def retrieve_game(match_id):
     return GameSelector(match_id)
 
 
-def list_rounds(user, map_query, result_query):
+def list_rounds(user):
     query: QuerySet = Round.objects.filter(replay__replay__uploaded_by=user)
-    if map_query:
-        query: QuerySet = query.filter(map=map_query)
-    if result_query:
-        query: QuerySet = query.filter(won=True)
     return RoundsSelector(query)
+
+
+def list_individual_stats(user):
+    query: QuerySet = Round.objects.filter(replay__replay__uploaded_by=user)
+    return IndividualStatsSelector(query)
+
+
+def replay_list_queryset(fetched_by: User) -> QuerySet:
+    return Replay.objects.filter(uploaded_by=fetched_by)
+
+
+def replay_exists(fetched_by: User, uuid: uuid.UUID) -> bool:
+    return Replay.objects.filter(uploaded_by=fetched_by, uuid=uuid).exists()
+
+
+def replay_destroy_queryset(fetched_by: User, id: uuid.UUID) -> QuerySet:
+    return Replay.objects.filter(uploaded_by=fetched_by, uuid=id)
+
+
+def round_list_queryset(fetched_by: User) -> QuerySet:
+    return Round.objects.filter(replay__replay__uploaded_by=fetched_by)
+
+
+def game_exists(fetched_by: User, match_id: uuid) -> bool:
+    return Round.objects.filter(replay__replay__uploaded_by=fetched_by, match_id=str(match_id)).exists()
+
+
+def vod_exists(fetched_by: User, id: uuid.UUID) -> bool:
+    return Vod.objects.filter(user=fetched_by, id=id).exists()
+
+
+def list_vods(fetched_by: User) -> QuerySet:
+    return Vod.objects.filter(user=fetched_by)
+
+
+class IndividualStatsSelector:
+    def __init__(self, rounds):
+        self.general: dict = StatsSelector(rounds).individual
+        self.maps: dict = {
+            played_map: StatsSelector(rounds.filter(map=played_map))
+            for played_map in set(
+                rounds.values_list("map", flat=True)
+            )
+        }
 
 
 class RoundsSelector:
@@ -223,39 +252,3 @@ def player_stats_aggregate(player: QuerySet) -> dict:
         kost=Count(Case(When(kost=True, then=1))),
         multikills=Count(Case(When(multikill=True, then=1)))
     )
-
-
-def rounds_list(fetched_by: User):
-    return round_list_queryset(fetched_by)
-
-
-def rounds_retrieve(fetched_by: User, match_id):
-    return Round.objects.filter(replay__replay__uploaded_by=fetched_by, match_id=match_id)
-
-
-def replay_list_queryset(fetched_by: User) -> QuerySet:
-    return Replay.objects.filter(uploaded_by=fetched_by)
-
-
-def replay_exists(fetched_by: User, uuid: uuid.UUID) -> bool:
-    return Replay.objects.filter(uploaded_by=fetched_by, uuid=uuid).exists()
-
-
-def replay_destroy_queryset(fetched_by: User, id: uuid.UUID) -> QuerySet:
-    return Replay.objects.filter(uploaded_by=fetched_by, uuid=id)
-
-
-def round_list_queryset(fetched_by: User) -> QuerySet:
-    return Round.objects.filter(replay__replay__uploaded_by=fetched_by)
-
-
-def game_exists(fetched_by: User, match_id: uuid) -> bool:
-    return Round.objects.filter(replay__replay__uploaded_by=fetched_by, match_id=str(match_id)).exists()
-
-
-def vod_exists(fetched_by: User, id: uuid.UUID) -> bool:
-    return Vod.objects.filter(user=fetched_by, id=id).exists()
-
-
-def list_vods(fetched_by: User) -> QuerySet:
-    return Vod.objects.filter(user=fetched_by)
