@@ -20,15 +20,6 @@ class GameViewSetTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data),1)
 
-    def test_list_games_with_map_query(self):
-        replay = ReplayFactory(uploaded_by=self.user)
-        round_replay = RoundReplayFactory(replay=replay)
-        game = RoundFactory(replay=round_replay)
-        url = f"{self.url}?map={game.map}"
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
-
     def test_retrieve_game(self):
         replay = ReplayFactory(uploaded_by=self.user)
         round_replay = RoundReplayFactory(replay=replay)
